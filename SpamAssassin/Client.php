@@ -1,5 +1,7 @@
 <?php
 
+require_once 'SpamAssassin/Exception.php';
+
 class SpamAssassin_Client
 {
 
@@ -10,6 +12,7 @@ class SpamAssassin_Client
     {
         $this->socket = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"));
         socket_connect($this->socket, $hostname, $port);
+//        socket_set_nonblock($this->socket);
     }
 
     private function _exec($cmd)
@@ -20,18 +23,23 @@ class SpamAssassin_Client
 
     private function _write($data)
     {
-        socket_write($this->socket, $data);
-        socket_shutdown($this->socket, 1);
+        socket_write($this->socket, $data, strlen($data));
     }
 
     private function _read()
     {
         $return = '';
-
         do {
-            $buffer = socket_read($this->socket, 128);
+            $buffer = socket_read($this->socket, 1024, PHP_NORMAL_READ);
+
+            if (trim($buffer) == "") {
+                break;
+            }
+
+            echo $buffer;
             $return .= $buffer;
-        } while ($buffer != "");
+
+        } while (true);
 
         return $return;
     }
