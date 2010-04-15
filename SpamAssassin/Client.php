@@ -4,39 +4,51 @@ require_once 'SpamAssassin/Exception.php';
 
 class SpamAssassin_Client
 {
-
     const PROCESS = 'PROCESS';
     const CHECK   = 'CHECK';
 
+    protected $hostname;
+    protected $port;
+    protected $socket;
+
     public function __construct($hostname = 'localhost', $port = '783')
     {
-        $this->socket = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"));
-        socket_connect($this->socket, $hostname, $port);
-//        socket_set_nonblock($this->socket);
+        $this->hostname = $hostname;
+        $this->port     = $port;
     }
 
-    private function _exec($cmd)
+    protected function getSocket()
     {
-        $this->_write($cmd, false);
-        return $this->_read();
+        $socket = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"));
+        socket_connect($socket, $this->hostname, $this->port);
+        socket_set_nonblock($socket);
+        return $socket;
     }
 
-    private function _write($data)
+    protected function exec($cmd)
     {
-        socket_write($this->socket, $data, strlen($data));
+        $socket = $this->getSocket();
+        $this->write($socket, $cmd);
+        $result = $this->read($socket);
+        return $result;
     }
 
-    private function _read()
+    protected function write($socket, $data)
+    {
+        socket_write($socket, $data, strlen($data));
+        socket_shutdown($socket, 1);
+    }
+
+    protected function read($socket)
     {
         $return = '';
         do {
-            $buffer = socket_read($this->socket, 1024, PHP_NORMAL_READ);
+            $buffer = socket_read($socket, 128, PHP_NORMAL_READ);
 
-            if (trim($buffer) == "") {
+            if ($buffer === "") {
                 break;
             }
 
-            echo $buffer;
             $return .= $buffer;
 
         } while (true);
@@ -47,7 +59,7 @@ class SpamAssassin_Client
     public function ping()
     {
 
-        $return = $this->_exec("PING SPAMC/1.3\n");
+        $return = $this->exec("PING SPAMC/1.3\n");
 
         if (strpos($return, "PONG") == false) {
             return false;
@@ -61,13 +73,15 @@ class SpamAssassin_Client
     {
         $lenght = strlen($message . "\n");
 
-        $cmd  = "CHECK " . "SPAMC/1.2\r\n";
+        $cmd  = "CHECK " . "SPAMC/1.4\r\n";
         $cmd .= "Content-lenght: $lenght\r\n";
+        $cmd .= "User: ppadron\r\n";
         $cmd .= "\r\n";
         $cmd .= $message;
         $cmd .= "\r\n";
+        $cmd .= "\r\n";
 
-        $output = $this->_exec($cmd);
+        $output = $this->exec($cmd);
 
         $lines = explode("\r\n", $output);
 
