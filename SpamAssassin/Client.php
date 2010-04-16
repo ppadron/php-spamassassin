@@ -85,12 +85,10 @@ class SpamAssassin_Client
 
         $lines = explode("\r\n", $output);
 
-        $matches = array();
-
         preg_match(
             '/^Spam: (True|False) ; (\S+) \/ (\S+)/',
             $lines[1],
-            &$matches
+            $matches
         );
 
         if (empty($matches)) {
