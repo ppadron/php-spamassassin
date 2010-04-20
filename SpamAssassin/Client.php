@@ -50,7 +50,7 @@ class SpamAssassin_Client
 
         while (($buffer = socket_read($socket, 128, PHP_NORMAL_READ)) !== '') {
 
-            if (trim($buffer) == "") {
+            if ($buffer == "\r") {
                 break;
             }
 
@@ -58,13 +58,11 @@ class SpamAssassin_Client
 
         }
 
-        echo $headers;
-
         $message = '';
 
         while (($buffer = socket_read($socket, 128, PHP_NORMAL_READ)) !== '') {
 
-            if (trim($buffer) == "") {
+            if ($buffer == "\r") {
                 break;
             }
 
@@ -72,7 +70,7 @@ class SpamAssassin_Client
 
         }
 
-        echo $message;
+        return array("headers" => $headers, "message" => $message);
 
     }
 
@@ -81,7 +79,7 @@ class SpamAssassin_Client
 
         $return = $this->exec("PING SPAMC/1.3\n");
 
-        if (strpos($return, "PONG") == false) {
+        if (strpos($return["headers"], "PONG") == false) {
             return false;
         }
 
@@ -102,7 +100,7 @@ class SpamAssassin_Client
 
         $output = $this->exec($cmd);
 
-        return $output;
+        return $output["message"];
     }
 
     public function headers($message)
@@ -117,8 +115,8 @@ class SpamAssassin_Client
         $cmd .= "\r\n\r\n";
 
         $output = $this->exec($cmd);
-        
-        return $output;
+
+        return $output["message"];
     
     }
 
@@ -136,7 +134,7 @@ class SpamAssassin_Client
 
         $output = $this->exec($cmd);
 
-        $lines = explode("\r\n", $output);
+        $lines = explode("\r\n", $output["headers"]);
 
         preg_match(
             '/^Spam: (True|False) ; (\S+) \/ (\S+)/',
@@ -176,13 +174,9 @@ class SpamAssassin_Client
 
         $output = $this->exec($cmd);
 
-        $lines = explode("\r\n", $output);
-
-        print_r($lines);
-
         preg_match(
-            '/^Spam: (True|False) ; (\S+) \/ (\S+)/',
-            $lines[1],
+            '/Spam: (True|False) ; (\S+) \/ (\S+)/',
+            $output["headers"],
             $matches
         );
 
@@ -198,6 +192,7 @@ class SpamAssassin_Client
 
         $result['score']    = (float) $matches[2];
         $result['thresold'] = (float) $matches[3];
+        $result['message']  = $output["message"];
 
         return $result;
     }

@@ -16,7 +16,7 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(true, $this->sa->ping());
     }
-/*
+
     public function testMultipleCallsOnSameObject()
     {
         $this->assertEquals(true, $this->sa->ping());
@@ -46,17 +46,12 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
         $this->assertEquals(0,     $return['score']);
     }
 
-    public function testProcess()
-    {
-        echo $this->sa->process($this->spam);
-    }
-
     public function testShouldReturnProcessedSpamMessageHeaders()
     {
         $headers = $this->sa->headers($this->spam);
 
         $this->assertContains("X-Spam-Flag: YES", $headers);
-        $this->assertContains("Subject: [SPAM]",  $headers);
+        $this->assertContains("X-Spam-Status: Yes, score=1000.0",  $headers);
     }
 
     public function testReportMethodShouldReturnReportObject()
@@ -68,5 +63,18 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
         $this->assertContains("1000 GTUBE",        $report);
 
     }
-*/
+
+    public function testProcess()
+    {
+        $result = $this->sa->process($this->spam);
+
+        $this->assertEquals(true, $result["is_spam"]);
+        $this->assertEquals(1000.0, $result["score"]);
+
+        $this->assertContains(
+            "Content-Description: original message before SpamAssassin",
+            $result["message"]
+        );
+    }
+
 }
