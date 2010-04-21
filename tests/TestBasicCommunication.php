@@ -56,12 +56,17 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
 
     public function testReportMethodShouldReturnReportObject()
     {
-        $report = $this->sa->report($this->spam);
+        $report = $this->sa->getSpamReport($this->spam);
 
         $this->assertContains("This is the GTUBE", $report);
         $this->assertContains("Content preview:",  $report);
         $this->assertContains("1000 GTUBE",        $report);
+    }
 
+    public function testReportWithHamMessage()
+    {
+        $report = $this->sa->getSpamReport($this->ham);
+        $this->assertEquals(null, $report);
     }
 
     public function testProcess()
