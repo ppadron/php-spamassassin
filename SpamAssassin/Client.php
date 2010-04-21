@@ -4,13 +4,6 @@ require_once 'SpamAssassin/Exception.php';
 
 class SpamAssassin_Client
 {
-    const PROCESS = 'PROCESS';
-    const CHECK   = 'CHECK';
-
-    static protected $allowedProcessMethods = array(
-        self::PROCESS, self::CHECK
-    );
-
     protected $hostname;
     protected $port;
     protected $socket;
