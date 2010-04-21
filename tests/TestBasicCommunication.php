@@ -68,8 +68,9 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
     {
         $result = $this->sa->process($this->spam);
 
-        $this->assertEquals(true, $result["is_spam"]);
+        $this->assertEquals(true,   $result["is_spam"]);
         $this->assertEquals(1000.0, $result["score"]);
+        $this->assertEquals(2980,   $result["content_lenght"]);
 
         $this->assertContains(
             "Content-Description: original message before SpamAssassin",
