@@ -78,7 +78,7 @@ class SpamAssassin_Client
         }
 
         preg_match(
-            '/Spam: (True|False) ; (\S+) \/ (\S+)/',
+            '/Spam: (True|False|Yes|No) ; (\S+) \/ (\S+)/',
             $header,
             $matches
         );
@@ -87,7 +87,7 @@ class SpamAssassin_Client
             throw new SpamAssassin_Exception("Could not parse 'Spam:' header");
         }
 
-        ($matches[1] == 'True') ?
+        ($matches[1] == 'True' || $matches[1] == 'Yes') ?
             $result['is_spam'] = true :
             $result['is_spam'] = false;
 
@@ -111,18 +111,25 @@ class SpamAssassin_Client
 
     }
 
-    public function report($message)
+    public function getSpamReport($message)
     {
         $lenght = strlen($message . "\r\n");
 
-        $cmd  = "REPORT " . "SPAMC/1.4\r\n";
+        $cmd  = "REPORT_IFSPAM " . "SPAMC/1.4\r\n";
         $cmd .= "Content-lenght: $lenght\r\n";
         $cmd .= "User: ppadron\r\n";
         $cmd .= "\r\n";
         $cmd .= $message;
         $cmd .= "\r\n\r\n";
 
-        $output = $this->exec($cmd);
+        $output  = $this->exec($cmd);
+
+        $headers = $this->filterResponseHeader($output["headers"]);
+
+        // should return null if message is not spam
+        if ($headers["is_spam"] === false) {
+            return null;
+        }        
 
         return $output["message"];
     }
