@@ -70,8 +70,39 @@ class SpamAssassin_Client
 
         }
 
+        socket_close($socket);
+
         return array("headers" => $headers, "message" => $message);
 
+    }
+
+    protected function filterResponseHeader($header)
+    {
+        $result = array();
+
+        if (preg_match('/Content-length: (\d+)/', $header, $matches)) {
+            $result['content_lenght'] = $matches[1];
+        }
+
+        preg_match(
+            '/Spam: (True|False) ; (\S+) \/ (\S+)/',
+            $header,
+            $matches
+        );
+
+        if (empty($matches)) {
+            throw new SpamAssassin_Exception("Could not parse 'Spam:' header");
+        }
+
+        ($matches[1] == 'True') ?
+            $result['is_spam'] = true :
+            $result['is_spam'] = false;
+
+        $result['score']    = (float) $matches[2];
+        $result['thresold'] = (float) $matches[3];
+
+        return $result;
+        
     }
 
     public function ping()
@@ -134,28 +165,7 @@ class SpamAssassin_Client
 
         $output = $this->exec($cmd);
 
-        $lines = explode("\r\n", $output["headers"]);
-
-        preg_match(
-            '/^Spam: (True|False) ; (\S+) \/ (\S+)/',
-            $lines[1],
-            $matches
-        );
-
-        if (empty($matches)) {
-            throw new SpamAssassin_Exception("Could not parse response for CHECK command");
-        }
-
-        $result = array();
-
-        ($matches[1] == 'True') ?
-            $result['is_spam'] = true :
-            $result['is_spam'] = false;
-
-        $result['score']    = (float) $matches[2];
-        $result['thresold'] = (float) $matches[3];
-
-        return $result;
+        return $this->filterResponseHeader($output["headers"]);
 
     }
 
@@ -172,27 +182,9 @@ class SpamAssassin_Client
         $cmd .= "\r\n";
         $cmd .= "\r\n";
 
-        $output = $this->exec($cmd);
-
-        preg_match(
-            '/Spam: (True|False) ; (\S+) \/ (\S+)/',
-            $output["headers"],
-            $matches
-        );
-
-        if (empty($matches)) {
-            throw new SpamAssassin_Exception("Could not parse response for command");
-        }
-
-        $result = array();
-
-        ($matches[1] == 'True') ?
-            $result['is_spam'] = true :
-            $result['is_spam'] = false;
-
-        $result['score']    = (float) $matches[2];
-        $result['thresold'] = (float) $matches[3];
-        $result['message']  = $output["message"];
+        $output            = $this->exec($cmd);
+        $result            = $this->filterResponseHeader($output["headers"]);
+        $result['message'] = $output["message"];
 
         return $result;
     }
