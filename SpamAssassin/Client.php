@@ -65,7 +65,7 @@ class SpamAssassin_Client
 
         socket_close($socket);
 
-        return array("headers" => $headers, "message" => $message);
+        return array("headers" => trim($headers), "message" => trim($message));
 
     }
 
@@ -187,6 +187,31 @@ class SpamAssassin_Client
         $result['message'] = $output["message"];
 
         return $result;
+    }
+
+    public function symbols($message)
+    {
+        $lenght = strlen($message . "\n");      
+
+        $cmd  = "SYMBOLS " . "SPAMC/1.4\r\n";
+        $cmd .= "Content-lenght: $lenght\r\n";
+        $cmd .= "User: ppadron\r\n";
+        $cmd .= "\r\n";
+        $cmd .= $message;
+        $cmd .= "\r\n";
+        $cmd .= "\r\n";
+
+        $output = $this->exec($cmd);
+
+        if (empty($output["message"])) {
+            return array();
+        }
+
+        $return = explode(",", $output["message"]);
+        $return = array_map('trim', $return);
+
+        return $return;
+
     }
 
 }

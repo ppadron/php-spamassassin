@@ -76,4 +76,10 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSymbols()
+    {
+        $result = $this->sa->symbols($this->spam);
+        $this->assertEquals(true, in_array('GTUBE', $result));
+    }
+
 }
