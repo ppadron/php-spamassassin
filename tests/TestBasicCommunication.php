@@ -17,13 +17,6 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->sa->ping());
     }
 
-    public function testMultipleCallsOnSameObject()
-    {
-        $this->assertEquals(true, $this->sa->ping());
-        $this->assertEquals(true, $this->sa->ping());
-        $this->assertEquals(true, $this->sa->ping());
-    }
-
     public function testCheckSpamMessage()
     {
         $message = file_get_contents(dirname(__FILE__) . "/files/spam.txt");
