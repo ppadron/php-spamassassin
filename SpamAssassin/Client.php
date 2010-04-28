@@ -4,6 +4,17 @@ require_once 'SpamAssassin/Exception.php';
 
 class SpamAssassin_Client
 {
+
+    const LEARN_SPAM   = 0;
+    const LEARN_HAM    = 1;
+    const LEARN_FORGET = 2;
+
+    protected $learnTypes = array(
+        self::LEARN_SPAM,
+        self::LEARN_HAM,
+        self::LEARN_FORGET
+    );
+
     protected $hostname;
     protected $port;
     protected $socket;
@@ -211,6 +222,61 @@ class SpamAssassin_Client
         $return = array_map('trim', $return);
 
         return $return;
+
+    }
+
+    public function learn($message, $learnType = self::LEARN_SPAM)
+    {
+        if (!in_array($learnType, $this->learnTypes)) {
+            throw new SpamAssassin_Exception("Invalid learn type ($learnType)");
+        }
+
+        $lenght = strlen($message . "\n");
+
+        $cmd  = "TELL " . "SPAMC/1.4\r\n";
+        $cmd .= "Content-lenght: $lenght\r\n";
+        $cmd .= "User: ppadron\r\n";
+
+        if ($learnType == self::LEARN_SPAM) {
+            $cmd .= "Message-class: spam\r\n";
+            $cmd .= "Set: local\r\n";
+        } else if ($learnType == self::LEARN_HAM) {
+            $cmd .= "Message-class: ham\r\n";
+            $cmd .= "Set: local\r\n";
+        } else if ($learnType == self::LEARN_FORGET) {
+            $cmd .= "Remove: local\r\n";
+        }
+
+        $cmd .= "\r\n";
+        $cmd .= $message;
+        $cmd .= "\r\n";
+        $cmd .= "\r\n";
+
+        $result = $this->exec($cmd);
+
+        if ($learnType == self::LEARN_SPAM || $learnType == self::LEARN_HAM) {
+            if (preg_match('/DidSet: (\S+)/', $result["headers"], $matches)) {
+                if ($matches[1] == 'local') {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                throw new SpamAssassin_Exception("SpamAssassin could not learn the message");
+            }
+        }
+
+        if ($learnType == self::LEARN_FORGET) {
+            if (preg_match('/DidRemove: (\S+)/', $result["headers"], $matches)) {
+                if ($matches[1] == 'local') {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                throw new SpamAssassin_Exception("SpamAssassin could not forget the message");
+            }
+        }
 
     }
 
