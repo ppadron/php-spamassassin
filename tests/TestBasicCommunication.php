@@ -7,7 +7,13 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->sa = new SpamAssassin_Client("localhost", "783");
+        /* @see phpunit.xml */
+        $this->sa = new SpamAssassin_Client(
+            $GLOBALS["PHPUNIT_SA_HOST"],
+            (int) $GLOBALS["PHPUNIT_SA_PORT"],
+            $GLOBALS["PHPUNIT_SA_USER"]
+        );
+
         $this->gtube = $this->_getMessage('Spam_GTUBE.txt');
     }
 
