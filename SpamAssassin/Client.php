@@ -54,7 +54,7 @@ class SpamAssassin_Client
     {
         $headers = '';
 
-        while (($buffer = socket_read($socket, 128, PHP_NORMAL_READ)) !== '') {
+        while (($buffer = @socket_read($socket, 128, PHP_NORMAL_READ)) !== '') {
 
             if ($buffer == "\r") {
                 break;
@@ -86,10 +86,21 @@ class SpamAssassin_Client
     {
         $result = new SpamAssassin_Client_Result();
 
-        if (preg_match('/SPAMD\/(\d\.\d) (\d+) (\S+)/', $header, $matches)) {
+        if (preg_match('/SPAMD\/(\d\.\d) (\d+) (.*)\r\n/', $header, $matches)) {
+
             $result->protocolVersion = $matches[1];
             $result->responseCode    = $matches[2];
             $result->responseMessage = $matches[3];
+
+            if ($result->responseCode != 0) {
+                throw new SpamAssassin_Exception(
+                    $result->responseMessage,
+                    $result->responseCode
+                );
+            }
+            
+        } else {
+            throw new SpamAssassin_Exception('Could not parse response header');
         }
 
         if (preg_match('/Content-length: (\d+)/', $header, $matches)) {
