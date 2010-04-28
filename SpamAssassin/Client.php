@@ -86,8 +86,7 @@ class SpamAssassin_Client
     {
         $result = new SpamAssassin_Client_Result();
 
-        if (preg_match('/SPAMD\/(\d\.\d) (\d+) (.*)\r\n/', $header, $matches)) {
-
+        if (preg_match('/SPAMD\/(\d\.\d) (\d+) (.*)/', $header, $matches)) {
             $result->protocolVersion = $matches[1];
             $result->responseCode    = $matches[2];
             $result->responseMessage = $matches[3];
@@ -282,6 +281,7 @@ class SpamAssassin_Client
         $cmd .= "\r\n";
 
         $result   = $this->exec($cmd);
+
         $response = $this->parseResponseHeaders($result["headers"]);
         
         if ($learnType == self::LEARN_SPAM || $learnType == self::LEARN_HAM) {
