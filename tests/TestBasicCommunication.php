@@ -32,10 +32,9 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
         $message = $this->_getMessage('Spam_testCheckSpamMessage.txt');
         $return  = $this->sa->check($message);
 
-        $this->assertEquals(true,   is_array($return));
-        $this->assertEquals(true,   $return['is_spam']);
-        $this->assertEquals(5.0,    $return['thresold']);
-        $this->assertEquals(1000.0, $return['score']);
+        $this->assertTrue($return->isSpam);
+        $this->assertEquals(5.0,    $return->thresold);
+        $this->assertEquals(1000.0, $return->score);
     }
 
     public function testCheckHamMessage()
@@ -43,10 +42,8 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
         $message = $this->_getMessage('Ham_testCheckHamMessage.txt');
         $return  = $this->sa->check($message);
 
-        $this->assertEquals(true,  is_array($return));
-        $this->assertEquals(false, $return['is_spam']);
-        $this->assertEquals(5.0,   $return['thresold']);
-        $this->assertEquals(-14.2,     $return['score']);
+        $this->assertFalse($return->isSpam);
+        $this->assertTrue($return->score < $return->thresold);
     }
 
     public function testShouldReturnProcessedSpamMessageHeaders()
@@ -78,13 +75,12 @@ class BasicCommunication extends PHPUnit_Framework_TestCase
     {
         $result = $this->sa->process($this->gtube);
 
-        $this->assertEquals(true,   $result["is_spam"]);
-        $this->assertEquals(1000.0, $result["score"]);
-        $this->assertEquals(2980,   $result["content_lenght"]);
+        $this->assertEquals(true,   $result->isSpam);
+        $this->assertEquals(1000.0, $result->score);
 
         $this->assertContains(
             "Content-Description: original message before SpamAssassin",
-            $result["message"]
+            $result->output
         );
     }
 

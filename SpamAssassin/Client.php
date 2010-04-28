@@ -1,6 +1,7 @@
 <?php
 
 require_once 'SpamAssassin/Exception.php';
+require_once 'SpamAssassin/Client/Result.php';
 
 class SpamAssassin_Client
 {
@@ -81,30 +82,45 @@ class SpamAssassin_Client
 
     }
 
-    protected function filterResponseHeader($header)
+    protected function parseResponseHeaders($header)
     {
-        $result = array();
+        $result = new SpamAssassin_Client_Result();
 
-        if (preg_match('/Content-length: (\d+)/', $header, $matches)) {
-            $result['content_lenght'] = $matches[1];
+        if (preg_match('/SPAMD\/(\d\.\d) (\d+) (\S+)/', $header, $matches)) {
+            $result->protocolVersion = $matches[1];
+            $result->responseCode    = $matches[2];
+            $result->responseMessage = $matches[3];
         }
 
-        preg_match(
+        if (preg_match('/Content-length: (\d+)/', $header, $matches)) {
+            $result->contentLenght = $matches[1];
+        }
+
+        if (preg_match(
             '/Spam: (True|False|Yes|No) ; (\S+) \/ (\S+)/',
             $header,
             $matches
-        );
+        )) {
 
-        if (empty($matches)) {
-            throw new SpamAssassin_Exception("Could not parse 'Spam:' header");
+            ($matches[1] == 'True' || $matches[1] == 'Yes') ?
+                $result->isSpam = true :
+                $result->isSpam = false;
+
+            $result->score    = (float) $matches[2];
+            $result->thresold = (float) $matches[3];
         }
 
-        ($matches[1] == 'True' || $matches[1] == 'Yes') ?
-            $result['is_spam'] = true :
-            $result['is_spam'] = false;
+        if (preg_match('/DidSet: (\S+)/', $header, $matches)) {
+            $result->didSet = true;
+        } else {
+            $result->didSet = false;
+        }
 
-        $result['score']    = (float) $matches[2];
-        $result['thresold'] = (float) $matches[3];
+        if (preg_match('/DidRemove: (\S+)/', $header, $matches)) {
+            $result->didRemove = true;
+        } else {
+            $result->didRemove = false;
+        }
 
         return $result;
         
@@ -136,12 +152,12 @@ class SpamAssassin_Client
 
         $output  = $this->exec($cmd);
 
-        $headers = $this->filterResponseHeader($output["headers"]);
+        $headers = $this->parseResponseHeaders($output["headers"]);
 
         // should return null if message is not spam
-        if ($headers["is_spam"] === false) {
+        if ($response->isSpam === false) {
             return null;
-        }        
+        }
 
         return $output["message"];
     }
@@ -177,7 +193,7 @@ class SpamAssassin_Client
 
         $output = $this->exec($cmd);
 
-        return $this->filterResponseHeader($output["headers"]);
+        return $this->parseResponseHeaders($output["headers"]);
 
     }
 
@@ -194,9 +210,10 @@ class SpamAssassin_Client
         $cmd .= "\r\n";
         $cmd .= "\r\n";
 
-        $output            = $this->exec($cmd);
-        $result            = $this->filterResponseHeader($output["headers"]);
-        $result['message'] = $output["message"];
+        $output = $this->exec($cmd);
+        $result = $this->parseResponseHeaders($output["headers"]);
+
+        $result->output = $output["message"];
 
         return $result;
     }
@@ -253,30 +270,13 @@ class SpamAssassin_Client
         $cmd .= "\r\n";
         $cmd .= "\r\n";
 
-        $result = $this->exec($cmd);
-
+        $result   = $this->exec($cmd);
+        $response = $this->parseResponseHeaders($result["headers"]);
+        
         if ($learnType == self::LEARN_SPAM || $learnType == self::LEARN_HAM) {
-            if (preg_match('/DidSet: (\S+)/', $result["headers"], $matches)) {
-                if ($matches[1] == 'local') {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                throw new SpamAssassin_Exception("SpamAssassin could not learn the message");
-            }
-        }
-
-        if ($learnType == self::LEARN_FORGET) {
-            if (preg_match('/DidRemove: (\S+)/', $result["headers"], $matches)) {
-                if ($matches[1] == 'local') {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                throw new SpamAssassin_Exception("SpamAssassin could not forget the message");
-            }
+            return $response->didSet;
+        } else {
+            return $response->didRemove;
         }
 
     }
