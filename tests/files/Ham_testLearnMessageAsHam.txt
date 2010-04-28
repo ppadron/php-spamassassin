@@ -1,0 +1,95 @@
+From announce-return-13-apmail-spamassassin-announce-archive=spamassassin.apache.org@spamassassin.apache.org Tue Jun 06 13:35:24 2006
+Return-Path: <announce-return-13-apmail-spamassassin-announce-archive=spamassassin.apache.org@spamassassin.apache.org>
+Delivered-To: apmail-spamassassin-announce-archive@www.apache.org
+Received: (qmail 81966 invoked from network); 6 Jun 2006 13:35:24 -0000
+Received: from hermes.apache.org (HELO mail.apache.org) (209.237.227.199)
+  by minotaur.apache.org with SMTP; 6 Jun 2006 13:35:24 -0000
+Received: (qmail 55092 invoked by uid 500); 6 Jun 2006 13:35:13 -0000
+Delivered-To: apmail-spamassassin-announce-archive@spamassassin.apache.org
+Received: (qmail 55058 invoked by uid 500); 6 Jun 2006 13:35:13 -0000
+Mailing-List: contact announce-help@spamassassin.apache.org; run by ezmlm
+Precedence: bulk
+list-help: <mailto:announce-help@spamassassin.apache.org>
+list-unsubscribe: <mailto:announce-unsubscribe@spamassassin.apache.org>
+List-Post: <mailto:announce@spamassassin.apache.org>
+List-Id: <announce.spamassassin.apache.org>
+Delivered-To: mailing list announce@spamassassin.apache.org
+Delivered-To: moderator for announce@spamassassin.apache.org
+Received: (qmail 98356 invoked by uid 99); 5 Jun 2006 16:15:38 -0000
+X-ASF-Spam-Status: No, hits=0.0 required=10.0
+    tests=
+X-Spam-Check-By: apache.org
+Received-SPF: neutral (asf.osuosl.org: local policy)
+Date: Mon, 5 Jun 2006 12:15:14 -0400
+From: Theo Van Dinter <felicity@apache.org>
+To: Spamassassin Users List <users@spamassassin.apache.org>,
+    Spamassassin Devel List <dev@spamassassin.apache.org>,
+    Spamassassin Announcements List <announce@spamassassin.apache.org>
+Subject: ANNOUNCE: Apache SpamAssassin 3.0.6 available!
+Message-ID: <20060605161514.GO1612@kluge.net>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+    protocol="application/pgp-signature"; boundary="mvuFargmsA+C2jC8"
+Content-Disposition: inline
+User-Agent: Mutt/1.4.2.1i
+X-Virus-Checked: Checked by ClamAV on apache.org
+X-Spam-Rating: minotaur.apache.org 1.6.2 0/1000/N
+
+--mvuFargmsA+C2jC8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Apache SpamAssassin 3.0.6 is now available!  This is a maintainance
+release of the 3.0.x branch.
+
+Downloads are available from:
+  http://spamassassin.apache.org/downloads.cgi?update=3D200606050750
+
+The release file will also be available via CPAN in the near future.
+
+md5sum of archive files:
+  423eb193db9f7757c6d957f5c04550cb  Mail-SpamAssassin-3.0.6.tar.bz2
+  bf0a1e1a7f6e5dd719deda6293b83e35  Mail-SpamAssassin-3.0.6.tar.gz
+  72c012d51f8507c2839a34f900c80412  Mail-SpamAssassin-3.0.6.zip
+
+sha1sum of archive files:
+  10d42d954c421f40fbbd9411a5ff096e29240c6f  Mail-SpamAssassin-3.0.6.tar.bz2
+  78358df8ea26513a8fbe466f484d19e487e5438f  Mail-SpamAssassin-3.0.6.tar.gz
+  17031fd2c9b54846d4e41d7ea3945639659fd91e  Mail-SpamAssassin-3.0.6.zip
+
+
+The release files also have a .asc accompanying them.  The file serves
+as an external GPG signature for the given release file.  The signing=20
+key is available via the wwwkeys.pgp.net key server, as well as
+http://spamassassin.apache.org/released/GPG-SIGNING-KEY
+
+The key information is:
+
+pub  1024D/265FA05B 2003-06-09 SpamAssassin Signing Key <release@spamassass=
+in.org>
+     Key fingerprint =3D 26C9 00A4 6DD4 0CD5 AD24  F6D7 DEE0 1987 265F A05B
+
+3.0.6 fixes a remote code execution vulnerability if spamd is run with the
+"--vpopmail" and "-P" options.  If either/both of those options are not
+used, there is no vulnerability.
+
+Changelog:
+
+- bug 4926: given a certain set of parameters to spamd and a specially
+  formatted input message, users could cause spamd to execute arbitrary
+  commands as the spamd user
+
+--mvuFargmsA+C2jC8
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.2 (GNU/Linux)
+
+iD8DBQFEhFiSvTLro+k8grsRAoI9AJ9SjVCxDIJ6z9SlmmZwLn1RaWYaugCfWoZJ
+U0bB5y5qX5kj4BbwLFQfIt8=
+=An3l
+-----END PGP SIGNATURE-----
+
+--mvuFargmsA+C2jC8--

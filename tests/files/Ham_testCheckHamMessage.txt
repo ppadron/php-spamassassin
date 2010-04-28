@@ -1,0 +1,74 @@
+From announce-return-26-apmail-spamassassin-announce-archive=spamassassin.apache.org@spamassassin.apache.org Sat Jan 02 09:45:36 2010
+Return-Path: <announce-return-26-apmail-spamassassin-announce-archive=spamassassin.apache.org@spamassassin.apache.org>
+Delivered-To: apmail-spamassassin-announce-archive@www.apache.org
+Received: (qmail 27672 invoked from network); 2 Jan 2010 09:45:36 -0000
+Received: from hermes.apache.org (HELO mail.apache.org) (140.211.11.3)
+  by minotaur.apache.org with SMTP; 2 Jan 2010 09:45:36 -0000
+Received: (qmail 92473 invoked by uid 500); 2 Jan 2010 09:45:31 -0000
+Delivered-To: apmail-spamassassin-announce-archive@spamassassin.apache.org
+Received: (qmail 92451 invoked by uid 500); 2 Jan 2010 09:45:31 -0000
+Mailing-List: contact announce-help@spamassassin.apache.org; run by ezmlm
+Precedence: bulk
+list-help: <mailto:announce-help@spamassassin.apache.org>
+list-unsubscribe: <mailto:announce-unsubscribe@spamassassin.apache.org>
+List-Post: <mailto:announce@spamassassin.apache.org>
+List-Id: <announce.spamassassin.apache.org>
+Delivered-To: mailing list announce@spamassassin.apache.org
+Delivered-To: moderator for announce@spamassassin.apache.org
+Received: (qmail 52899 invoked by uid 99); 2 Jan 2010 07:42:44 -0000
+X-ASF-Spam-Status: No, hits=-2000.0 required=10.0
+    tests=ALL_TRUSTED
+X-Spam-Check-By: apache.org
+Date: 2 Jan 2010 07:42:23 -0000
+Message-ID: <20100102074223.6745.qmail@minotaur.apache.org>
+From: dos@apache.org
+To: dos@apache.org
+Subject: Apache SpamAssassin Y2K10 Rule Bug - Update Your Rules Now!
+
+I've posted the following note on the Apache SpamAssassin website [1]
+about an issue with a rule that may cause wanted email to be classified
+as spam by SpamAssassin.  If you're running SpamAssassin 3.2.x you are
+encouraged to update you rules (updates were released on sa-update
+around 1900 UTC Jan 1, 2010).
+
+Y2K10 Rule Bug - Update Your Rules Now!
+
+2010-01-01:
+
+Versions of the FH_DATE_PAST_20XX [2] rule released with versions of
+Apache SpamAssassin 3.2.0 thru 3.2.5 will trigger on most mail with a
+Date header that includes the year 2010 or later.  The rule will add a
+score of up to 3.6 towards the spam classification of all email.  You
+should take corrective action immediately; there are two easy ways to
+correct the problem:
+
+1) If your system is configured to use sa-update [3] run sa-update now.
+ An update is available that will correct the rule.  No further action
+is necessary (other than restarting spamd or any service that uses
+SpamAssassin directly).
+
+2) Add "score FH_DATE_PAST_20XX 0" without the quotes to the end of your
+local.cf file to disable the rule.  If you require help updating your
+rules to correct this issue you are encouraged to ask for assistance on
+the Apache SpamAssassin Users' list.  Users' mailing list info is here. [4]
+
+On behalf of the Apache SpamAssassin project I apologize for this error
+and the grief it may have caused you.
+
+Regards,
+
+Daryl C. W. O'Shea
+
+VP, Apache SpamAssassin
+
+[1] http://spamassassin.apache.org/
+[2] http://wiki.apache.org/spamassassin/Rules/FH_DATE_PAST_20XX
+[3] http://wiki.apache.org/spamassassin/RuleUpdates
+[4] http://wiki.apache.org/spamassassin/MailingLists
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: announce-unsubscribe@spamassassin.apache.org
+For additional commands, e-mail: announce-help@spamassassin.apache.org
+
+
+
