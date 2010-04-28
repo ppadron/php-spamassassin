@@ -19,10 +19,11 @@ class SpamAssassin_Client
     protected $port;
     protected $socket;
 
-    public function __construct($hostname = 'localhost', $port = '783')
+    public function __construct($hostname, $port, $user)
     {
         $this->hostname = $hostname;
         $this->port     = $port;
+        $this->user     = $user;
     }
 
     protected function getSocket()
@@ -128,7 +129,7 @@ class SpamAssassin_Client
 
         $cmd  = "REPORT_IFSPAM " . "SPAMC/1.4\r\n";
         $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: ppadron\r\n";
+        $cmd .= "User: $this->user\r\n";
         $cmd .= "\r\n";
         $cmd .= $message;
         $cmd .= "\r\n\r\n";
@@ -151,7 +152,7 @@ class SpamAssassin_Client
 
         $cmd  = "HEADERS SPAMC/1.4\r\n";
         $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: ppadron\r\n";
+        $cmd .= "User: $this->user\r\n";
         $cmd .= "\r\n";
         $cmd .= $message;
         $cmd .= "\r\n\r\n";
@@ -168,7 +169,7 @@ class SpamAssassin_Client
 
         $cmd  = "CHECK SPAMC/1.4\r\n";
         $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: ppadron\r\n";
+        $cmd .= "User: $this->user\r\n";
         $cmd .= "\r\n";
         $cmd .= $message;
         $cmd .= "\r\n";
@@ -187,7 +188,7 @@ class SpamAssassin_Client
 
         $cmd  = "PROCESS " . "SPAMC/1.4\r\n";
         $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: ppadron\r\n";
+        $cmd .= "User: $this->user\r\n";
         $cmd .= "\r\n";
         $cmd .= $message;
         $cmd .= "\r\n";
@@ -206,7 +207,7 @@ class SpamAssassin_Client
 
         $cmd  = "SYMBOLS " . "SPAMC/1.4\r\n";
         $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: ppadron\r\n";
+        $cmd .= "User: $this->user\r\n";
         $cmd .= "\r\n";
         $cmd .= $message;
         $cmd .= "\r\n";
@@ -235,7 +236,7 @@ class SpamAssassin_Client
 
         $cmd  = "TELL " . "SPAMC/1.4\r\n";
         $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: ppadron\r\n";
+        $cmd .= "User: $this->user\r\n";
 
         if ($learnType == self::LEARN_SPAM) {
             $cmd .= "Message-class: spam\r\n";
