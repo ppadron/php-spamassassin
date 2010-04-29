@@ -8,7 +8,7 @@ require_once dirname(__FILE__) . '/CheckTest.php';
 require_once dirname(__FILE__) . '/ProcessTest.php';
 require_once dirname(__FILE__) . '/HeadersTest.php';
 require_once dirname(__FILE__) . '/SymbolsTest.php';
-require_once dirname(__FILE__) . '/SpamTest.php';
+require_once dirname(__FILE__) . '/SpamReportTest.php';
 
 class AllTests {
 
@@ -19,7 +19,7 @@ class AllTests {
         $suite->addTestSuite('ConnectionTest');
         $suite->addTestSuite('LearnEnabledTest');
         $suite->addTestSuite('LearnDisabledTest');
-        $suite->addTestSuite('SpamTest');
+        $suite->addTestSuite('SpamReportTest');
         $suite->addTestSuite('HeadersTest');
         $suite->addTestSuite('CheckTest');
         $suite->addTestSuite('ProcessTest');

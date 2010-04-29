@@ -15,6 +15,7 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
         );
 
         $this->gtube = $this->getMessage('Spam_GTUBE.txt');
+        $this->ham   = $this->getMessage('Ham_testCheckHamMessage.txt');
     }
 
     protected function getMessage($filename)

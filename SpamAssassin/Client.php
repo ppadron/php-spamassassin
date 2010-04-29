@@ -295,4 +295,10 @@ class SpamAssassin_Client
 
     }
 
+    public function isSpam($message)
+    {
+        $result = $this->check($message);
+        return $result->isSpam;
+    }
+
 }

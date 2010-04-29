@@ -22,4 +22,10 @@ class CheckTest extends BaseTestCase
         $this->assertFalse($return->isSpam);
     }
 
+    public function testIsSpamShouldBeAnAliasToCheck()
+    {
+        $this->assertTrue($this->sa->isSpam($this->gtube));
+        $this->assertFalse($this->sa->isSpam($this->ham));
+    }
+
 }
