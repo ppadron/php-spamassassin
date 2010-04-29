@@ -195,7 +195,11 @@ class SpamAssassin_Client
     public function check($message)
     {
         return $this->exec('CHECK', $message);
+    }
 
+    public function isSpam($message)
+    {
+        return $this->check($message)->isSpam;
     }
 
     public function process($message)
@@ -245,12 +249,5 @@ class SpamAssassin_Client
         } else {
             return $result->didRemove;
         }
-
     }
-
-    public function isSpam($message)
-    {
-        return $this->check($message)->isSpam;
-    }
-
 }
