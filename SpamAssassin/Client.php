@@ -172,6 +172,7 @@ class SpamAssassin_Client
         return $output["message"];
     }
 
+
     public function headers($message)
     {
         $lenght = strlen($message . "\r\n");
@@ -201,9 +202,11 @@ class SpamAssassin_Client
         $cmd .= "\r\n";
         $cmd .= "\r\n";
 
-        $output = $this->exec($cmd);
+        $output   = $this->exec($cmd);
+        $response = $this->parseResponseHeaders($output["headers"]);
+        $response->output = $output["message"];
 
-        return $this->parseResponseHeaders($output["headers"]);
+        return $response;
 
     }
 

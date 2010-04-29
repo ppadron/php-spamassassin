@@ -4,25 +4,6 @@ require_once 'BaseTestCase.php';
 
 class SpamTest extends BaseTestCase
 {
-    public function testCheckSpamMessage()
-    {
-        $message = $this->getMessage('Spam_testCheckSpamMessage.txt');
-        $return  = $this->sa->check($message);
-
-        $this->assertTrue($return->isSpam);
-        $this->assertEquals(5.0,    $return->thresold);
-        $this->assertEquals(1000.0, $return->score);
-    }
-
-    public function testCheckHamMessage()
-    {
-        $message = $this->getMessage('Ham_testCheckHamMessage.txt');
-        $return  = $this->sa->check($message);
-
-        $this->assertFalse($return->isSpam);
-        $this->assertTrue($return->score < $return->thresold);
-    }
-
     public function testShouldReturnProcessedSpamMessageHeaders()
     {
         $message = $this->getMessage('Spam_GTUBE.txt');
@@ -46,25 +27,6 @@ class SpamTest extends BaseTestCase
         $message = $this->getMessage('Ham_testReportWithHamMessage.txt');
         $report = $this->sa->getSpamReport($message);
         $this->assertEquals(null, $report);
-    }
-
-    public function testProcess()
-    {
-        $result = $this->sa->process($this->gtube);
-
-        $this->assertEquals(true,   $result->isSpam);
-        $this->assertEquals(1000.0, $result->score);
-
-        $this->assertContains(
-            "Content-Description: original message before SpamAssassin",
-            $result->output
-        );
-    }
-
-    public function testSymbols()
-    {
-        $result = $this->sa->symbols($this->gtube);
-        $this->assertEquals(true, in_array('GTUBE', $result));
     }
 
 }
