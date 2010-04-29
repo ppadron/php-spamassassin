@@ -19,12 +19,14 @@ class SpamAssassin_Client
     protected $hostname;
     protected $port;
     protected $socket;
+    protected $protocolVersion;
 
-    public function __construct($hostname, $port, $user)
+    public function __construct($hostname, $port, $user, $protocolVersion = '1.3')
     {
-        $this->hostname = $hostname;
-        $this->port     = $port;
-        $this->user     = $user;
+        $this->hostname        = $hostname;
+        $this->port            = $port;
+        $this->user            = $user;
+        $this->protocolVersion = $protocolVersion;
     }
 
     protected function getSocket()
@@ -35,13 +37,31 @@ class SpamAssassin_Client
         return $socket;
     }
 
-    protected function exec($cmd) 
+    protected function exec($cmd, $message, array $additionalHeaders = array())
     {
         $socket = $this->getSocket();
-        $this->write($socket, $cmd);
-        $result = $this->read($socket);
 
-        return $result;
+        $contentLenght = strlen($message);
+
+        $cmd  = $cmd . " SPAMC/" . $this->protocolVersion . "\r\n";
+        $cmd .= "Content-lenght: " . $contentLenght . "\r\n";
+        $cmd .= "User: " .$this->user . "\r\n";
+
+        if (!empty($additionalHeaders)) {
+            foreach ($additionalHeaders as $headerName => $val) {
+                $cmd .= $headerName . ": " . $val . "\r\n";
+            }
+        }
+
+        $cmd .= "\r\n";
+        $cmd .= $message;
+        $cmd .= "\r\n\r\n";
+
+        $this->write($socket, $cmd);
+
+        list($headers, $message) = $this->read($socket);
+
+        return $this->parseOutput($headers, $message);
     }
 
     protected function write($socket, $data)
@@ -78,11 +98,11 @@ class SpamAssassin_Client
 
         socket_close($socket);
 
-        return array("headers" => trim($headers), "message" => trim($message));
+        return array($headers, $message);
 
     }
 
-    protected function parseResponseHeaders($header)
+    protected function parseOutput($header, $message)
     {
         $result = new SpamAssassin_Client_Result();
 
@@ -132,16 +152,21 @@ class SpamAssassin_Client
             $result->didRemove = false;
         }
 
+        $result->message = $message;
+
         return $result;
         
     }
 
     public function ping()
     {
+        $socket = $this->getSocket();
 
-        $return = $this->exec("PING SPAMC/1.3\n");
+        $this->write($socket, "PING SPAMC/1.3\n");
 
-        if (strpos($return["headers"], "PONG") == false) {
+        list($headers, $message) = $this->read($socket);
+
+        if (strpos($headers, "PONG") == false) {
             return false;
         }
 
@@ -151,109 +176,44 @@ class SpamAssassin_Client
 
     public function getSpamReport($message)
     {
-        $lenght = strlen($message . "\r\n");
-
-        $cmd  = "REPORT_IFSPAM " . "SPAMC/1.4\r\n";
-        $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: $this->user\r\n";
-        $cmd .= "\r\n";
-        $cmd .= $message;
-        $cmd .= "\r\n\r\n";
-
-        $output  = $this->exec($cmd);
-
-        $headers = $this->parseResponseHeaders($output["headers"]);
+        $result = $this->exec('REPORT_IFSPAM', $message);
 
         // should return null if message is not spam
-        if ($response->isSpam === false) {
+        if ($result->isSpam === false) {
             return null;
         }
 
-        return $output["message"];
+        return $result->message;
     }
 
 
     public function headers($message)
     {
-        $lenght = strlen($message . "\r\n");
-
-        $cmd  = "HEADERS SPAMC/1.4\r\n";
-        $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: $this->user\r\n";
-        $cmd .= "\r\n";
-        $cmd .= $message;
-        $cmd .= "\r\n\r\n";
-
-        $output = $this->exec($cmd);
-
-        return $output["message"];
-    
+        return $this->exec('HEADERS', $message)->message;
     }
 
     public function check($message)
     {
-        $lenght = strlen($message . "\n");
-
-        $cmd  = "CHECK SPAMC/1.4\r\n";
-        $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: $this->user\r\n";
-        $cmd .= "\r\n";
-        $cmd .= $message;
-        $cmd .= "\r\n";
-        $cmd .= "\r\n";
-
-        $output   = $this->exec($cmd);
-        $response = $this->parseResponseHeaders($output["headers"]);
-        $response->output = $output["message"];
-
-        return $response;
+        return $this->exec('CHECK', $message);
 
     }
 
     public function process($message)
     {
-
-        $lenght = strlen($message . "\n");      
-
-        $cmd  = "PROCESS " . "SPAMC/1.4\r\n";
-        $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: $this->user\r\n";
-        $cmd .= "\r\n";
-        $cmd .= $message;
-        $cmd .= "\r\n";
-        $cmd .= "\r\n";
-
-        $output = $this->exec($cmd);
-        $result = $this->parseResponseHeaders($output["headers"]);
-
-        $result->output = $output["message"];
-
-        return $result;
+        return $this->exec('PROCESS', $message);
     }
 
     public function symbols($message)
     {
-        $lenght = strlen($message . "\n");      
+        $result = $this->exec('SYMBOLS', $message);
 
-        $cmd  = "SYMBOLS " . "SPAMC/1.4\r\n";
-        $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: $this->user\r\n";
-        $cmd .= "\r\n";
-        $cmd .= $message;
-        $cmd .= "\r\n";
-        $cmd .= "\r\n";
-
-        $output = $this->exec($cmd);
-
-        if (empty($output["message"])) {
+        if (empty($result->message)) {
             return array();
         }
 
-        $return = explode(",", $output["message"]);
-        $return = array_map('trim', $return);
+        $symbols = explode(",", $result->message);
 
-        return $return;
-
+        return array_map('trim', $symbols);
     }
 
     public function learn($message, $learnType = self::LEARN_SPAM)
@@ -262,35 +222,28 @@ class SpamAssassin_Client
             throw new SpamAssassin_Exception("Invalid learn type ($learnType)");
         }
 
-        $lenght = strlen($message . "\n");
-
-        $cmd  = "TELL " . "SPAMC/1.4\r\n";
-        $cmd .= "Content-lenght: $lenght\r\n";
-        $cmd .= "User: $this->user\r\n";
-
         if ($learnType == self::LEARN_SPAM) {
-            $cmd .= "Message-class: spam\r\n";
-            $cmd .= "Set: local\r\n";
+            $additionalHeaders = array(
+                "Message-class" => "spam",
+                "Set"           => "local"
+            );
         } else if ($learnType == self::LEARN_HAM) {
-            $cmd .= "Message-class: ham\r\n";
-            $cmd .= "Set: local\r\n";
+            $additionalHeaders = array(
+                "Message-class" => "ham",
+                "Set"           => "local"
+            );
         } else if ($learnType == self::LEARN_FORGET) {
-            $cmd .= "Remove: local\r\n";
+            $additionalHeaders = array(
+                "Remove" => "local"
+            );
         }
 
-        $cmd .= "\r\n";
-        $cmd .= $message;
-        $cmd .= "\r\n";
-        $cmd .= "\r\n";
-
-        $result   = $this->exec($cmd);
-
-        $response = $this->parseResponseHeaders($result["headers"]);
+        $result = $this->exec('TELL', $message, $additionalHeaders);
         
         if ($learnType == self::LEARN_SPAM || $learnType == self::LEARN_HAM) {
-            return $response->didSet;
+            return $result->didSet;
         } else {
-            return $response->didRemove;
+            return $result->didRemove;
         }
 
     }

@@ -13,7 +13,7 @@ class ProcessTest extends BaseTestCase
 
         $this->assertContains(
             "Content-Description: original message before SpamAssassin",
-            $result->output
+            $result->message
         );
     }
 }

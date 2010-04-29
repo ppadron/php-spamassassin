@@ -3,6 +3,6 @@
         <var name="PHPUNIT_SA_HOST" value="localhost"/>
         <var name="PHPUNIT_SA_PORT" value="783"/>
         <var name="PHPUNIT_SA_USER" value="ppadron"/>
-        <var name="PHPUNIT_SA_LEARN_ENABLED" value="0"/>
+        <var name="PHPUNIT_SA_LEARN_ENABLED" value="1"/>
     </php>
 </phpunit>
