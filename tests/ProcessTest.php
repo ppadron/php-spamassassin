@@ -9,7 +9,8 @@ class ProcessTest extends BaseTestCase
         $result = $this->sa->process($this->gtube);
 
         $this->assertEquals(true,   $result->isSpam);
-        $this->assertEquals(1000.0, $result->score);
+        $this->assertTrue(is_double($result->score));
+        $this->assertTrue(is_double($result->thresold));
 
         $this->assertContains(
             "Content-Description: original message before SpamAssassin",

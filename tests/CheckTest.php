@@ -11,7 +11,7 @@ class CheckTest extends BaseTestCase
 
         $this->assertTrue($return->isSpam);
         $this->assertEquals(5.0,    $return->thresold);
-        $this->assertEquals(1000.0, $return->score);
+        $this->assertTrue($return->score >= 1000);
     }
 
     public function testShouldBeAbleToCheckHamMessage()

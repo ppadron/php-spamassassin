@@ -8,7 +8,6 @@ class SpamReportTest extends BaseTestCase
     {
         $report = $this->sa->getSpamReport($this->gtube);
 
-        $this->assertContains("This is the GTUBE", $report);
         $this->assertContains("Content preview:",  $report);
         $this->assertContains("1000 GTUBE",        $report);
     }

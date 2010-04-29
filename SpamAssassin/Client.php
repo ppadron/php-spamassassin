@@ -18,22 +18,46 @@ class SpamAssassin_Client
 
     protected $hostname;
     protected $port;
+    protected $socketPath;
     protected $socket;
-    protected $protocolVersion;
+    protected $protocolVersion = 1.5;
 
-    public function __construct($hostname, $port, $user, $protocolVersion = '1.3')
+    public function __construct($params)
     {
-        $this->hostname        = $hostname;
-        $this->port            = $port;
-        $this->user            = $user;
-        $this->protocolVersion = $protocolVersion;
+        if (isset($params["socketPath"])) {
+            $this->socketPath = $params["socketPath"];
+        } else {
+            $this->hostname = $params["hostname"];
+            $this->port     = $params["port"];
+        }
+
+        if (isset($params["user"])) {
+            $this->user = $params["user"];
+        }
+
+        if (isset($params["protocolVersion"])) {
+            $this->protocolVersion = $params["protocolVersion"];
+        }
     }
 
     protected function getSocket()
     {
-        $socket = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"));
-        socket_connect($socket, $this->hostname, $this->port);
+        if (!empty($this->socketPath)) {
+            $socket      = socket_create(AF_UNIX, SOCK_STREAM, 0);
+            $isConnected = @socket_connect($socket, $this->socketPath);
+        } else {
+            $socket      = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"));
+            $isConnected = @socket_connect($socket, $this->hostname, $this->port);
+        }
+
+        if ($isConnected === false) {
+            $errorCode    = socket_last_error();
+            $errorMessage = socket_strerror($errorCode);
+            throw new SpamAssassin_Exception("Could not connect to SpamAssassin: {$errorMessage}", $errorCode);
+        }
+
         socket_set_nonblock($socket);
+
         return $socket;
     }
 
@@ -45,7 +69,10 @@ class SpamAssassin_Client
 
         $cmd  = $cmd . " SPAMC/" . $this->protocolVersion . "\r\n";
         $cmd .= "Content-lenght: " . $contentLenght . "\r\n";
-        $cmd .= "User: " .$this->user . "\r\n";
+
+        if (!empty($this->user)) {
+            $cmd .= "User: " .$this->user . "\r\n";
+        }
 
         if (!empty($additionalHeaders)) {
             foreach ($additionalHeaders as $headerName => $val) {
@@ -87,18 +114,12 @@ class SpamAssassin_Client
         $message = '';
 
         while (($buffer = socket_read($socket, 128, PHP_NORMAL_READ)) !== '') {
-
-            if ($buffer == "\r") {
-                break;
-            }
-
             $message .= $buffer;
-
         }
 
         socket_close($socket);
 
-        return array($headers, $message);
+        return array(trim($headers), trim($message));
 
     }
 
@@ -138,6 +159,24 @@ class SpamAssassin_Client
 
             $result->score    = (float) $matches[2];
             $result->thresold = (float) $matches[3];
+        } else {
+
+            /**
+             * In PROCESS method with protocol version before 1.3, SpamAssassin 
+             * won't return the 'Spam:' field in the response header. In this case,
+             * it is necessary to check for the X-Spam-Status: header in the
+             * processed message headers.
+            */
+            if (preg_match('/X-Spam-Status: (Yes|No)\, score=(\d+\.\d) required=(\d+\.\d)/', $header.$message, $matches)) {
+
+                ($matches[1] == 'Yes') ? 
+                    $result->isSpam = true :
+                    $result->isSpam = false;
+
+                $result->score    = (float) $matches[2];
+                $result->thresold = (float) $matches[3];
+            }
+
         }
 
         if (preg_match('/DidSet: (\S+)/', $header, $matches)) {
@@ -152,7 +191,8 @@ class SpamAssassin_Client
             $result->didRemove = false;
         }
 
-        $result->message = $message;
+        $result->headers   = $header;
+        $result->message   = $message;
 
         return $result;
         
@@ -162,7 +202,7 @@ class SpamAssassin_Client
     {
         $socket = $this->getSocket();
 
-        $this->write($socket, "PING SPAMC/1.3\n");
+        $this->write($socket, "PING SPAMC/{$this->protocolVersion}\n");
 
         list($headers, $message) = $this->read($socket);
 

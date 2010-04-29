@@ -8,12 +8,22 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         /* @see phpunit.xml */
-        $this->sa = new SpamAssassin_Client(
-            $GLOBALS["PHPUNIT_SA_HOST"],
-            (int) $GLOBALS["PHPUNIT_SA_PORT"],
-            $GLOBALS["PHPUNIT_SA_USER"]
-        );
+        if (!empty($GLOBALS["PHPUNIT_SA_SOCKET"])) {
+            $params = array(
+                "socketPath" => $GLOBALS["PHPUNIT_SA_SOCKET"],
+                "user"       => $GLOBALS["PHPUNIT_SA_USER"],
+            );
+        } else {
+            $params = array(
+                "hostname" => $GLOBALS["PHPUNIT_SA_HOST"],
+                "port"     => (int) $GLOBALS["PHPUNIT_SA_PORT"],
+                "user"     => $GLOBALS["PHPUNIT_SA_USER"]
+            );
+        }
 
+        $params["protocolVersion"] = $GLOBALS["PHPUNIT_SA_PROTOCOL_VERSION"];
+
+        $this->sa    = new SpamAssassin_Client($params);
         $this->gtube = $this->getMessage('Spam_GTUBE.txt');
         $this->ham   = $this->getMessage('Ham_testCheckHamMessage.txt');
     }
