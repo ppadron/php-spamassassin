@@ -206,7 +206,7 @@ class SpamAssassin_Client
 
         list($headers, $message) = $this->read($socket);
 
-        if (strpos($headers, "PONG") == false) {
+        if (strpos($headers, "PONG") === false) {
             return false;
         }
 
