@@ -10,7 +10,7 @@ class RevokeTest extends BaseTestCase
         $today   = date('j, d M Y');
         $message = str_replace('2 Jan 2010', $today, $this->ham);
 
-        $this->assertTrue($this->sa->report($message));
+        $this->assertTrue($this->sa->revoke($message));
     }
 
 }
