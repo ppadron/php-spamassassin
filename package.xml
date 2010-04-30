@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+ <name>SpamAssassin_Client</name>
+ <channel>pear.php.net</channel>
+ <summary>Spamd protocol client for PHP</summary>
+ <description>PHP package that implements the spamd protocol specification</description>
+ <lead>
+  <name>Pedro Padron</name>
+  <user>ppadron</user>
+  <email>ppadron@php.net</email>
+  <active>yes</active>
+ </lead>
+ <date>2010-04-29</date>
+ <time>23:58:29</time>
+ <version>
+  <release>0.1.0</release>
+  <api>0.1.0</api>
+ </version>
+ <stability>
+  <release>alpha</release>
+  <api>alpha</api>
+ </stability>
+ <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
+ <notes>
+Initial release
+ </notes>
+ <contents>
+  <dir baseinstalldir="/" name="/">
+   <dir name="SpamAssassin">
+    <dir name="Client">
+     <file name="Exception.php" role="php" />
+     <file name="Result.php" role="php" />
+    </dir> <!-- /SpamAssassin/Client -->
+    <file name="Client.php" role="php" />
+   </dir> <!-- /SpamAssassin -->
+   <dir name="tests">
+    <dir name="files">
+     <file name="Ham_testCheckHamMessage.txt" role="test" />
+     <file name="Ham_testLearnMessageAsHam.txt" role="test" />
+     <file name="Ham_testReportWithHamMessage.txt" role="test" />
+     <file name="HeadersTest_Ham.txt" role="test" />
+     <file name="Spam_GTUBE.txt" role="test" />
+     <file name="Spam_testCheckSpamMessage.txt" role="test" />
+    </dir> <!-- /tests/files -->
+    <file name="AllTests.php" role="test" />
+    <file name="BaseTestCase.php" role="test" />
+    <file name="CheckTest.php" role="test" />
+    <file name="ConnectionTest.php" role="test" />
+    <file name="HeadersTest.php" role="test" />
+    <file name="LearnDisabledTest.php" role="test" />
+    <file name="LearnEnabledTest.php" role="test" />
+    <file name="phpunit.xml" role="test" />
+    <file name="ProcessTest.php" role="test" />
+    <file name="ReportTest.php" role="test" />
+    <file name="RevokeTest.php" role="test" />
+    <file name="SpamReportTest.php" role="test" />
+    <file name="SymbolsTest.php" role="test" />
+   </dir> <!-- /tests -->
+   <file name="SpamAssassin_Client-0.2.0.tgz" role="data" />
+   <file name="SpamAssassin_Client-0.2.tgz" role="data" />
+  </dir> <!-- / -->
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.2.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.7.0</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>0.1.0</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2010-04-29</date>
+   <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
+   <notes>
+Initial release
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.2</release>
+    <api>0.2</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2010-04-29</date>
+   <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
+   <notes>
+bugfixes
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.2.0</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2010-04-29</date>
+   <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
+   <notes>
+bugfixes
+   </notes>
+  </release>
+ </changelog>
+</package>
