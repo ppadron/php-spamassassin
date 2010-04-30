@@ -5,7 +5,6 @@ require_once 'SpamAssassin/Client/Result.php';
 
 class SpamAssassin_Client
 {
-
     const LEARN_SPAM   = 0;
     const LEARN_HAM    = 1;
     const LEARN_FORGET = 2;
@@ -22,7 +21,19 @@ class SpamAssassin_Client
     protected $socket;
     protected $protocolVersion = 1.5;
 
-    public function __construct($params)
+    /**
+     * Class constructor
+     * 
+     * Accepts an associative array with the following keys:
+     * 
+     * socketPath      - mandatory only if using UNIX sockets to local server
+     * hostname        - mandatory only if using remote SpamAssassin server
+     * user            - optional parameter
+     * protocolVersion - spamd protocol version (defaults to 1.5)
+     * 
+     * @param array $params SpamAssassin parameters
+     */
+    public function __construct(array $params)
     {
         if (isset($params["socketPath"])) {
             $this->socketPath = $params["socketPath"];
@@ -40,6 +51,9 @@ class SpamAssassin_Client
         }
     }
 
+    /**
+     * Creates a new socket connection with data provided in the constructor
+     */
     protected function getSocket()
     {
         if (!empty($this->socketPath)) {
@@ -61,6 +75,13 @@ class SpamAssassin_Client
         return $socket;
     }
 
+    /**
+     * Sends a command to the server and returns an object with the result 
+     * 
+     * @param string $cmd               Protocol command to be executed
+     * @param string $message           Full email message
+     * @param array  $additionalHeaders Associative array with additional headers
+     */
     protected function exec($cmd, $message, array $additionalHeaders = array())
     {
         $socket = $this->getSocket();
@@ -91,12 +112,27 @@ class SpamAssassin_Client
         return $this->parseOutput($headers, $message);
     }
 
+    /**
+     * Writes data to the socket
+     * 
+     * @param resource $socket Socket returned by getSocket()
+     * @param string   $data   Data to be written
+     * 
+     * @return void
+     */
     protected function write($socket, $data)
     {
         socket_write($socket, $data, strlen($data));
         socket_shutdown($socket, 1);
     }
 
+    /**
+     * Reads all input from the SpamAssassin server after data was written
+     * 
+     * @param resource $socket Socket connection created by getSocket()
+     * 
+     * @return array Array containing output headers and message
+     */
     protected function read($socket)
     {
         $headers = '';
@@ -106,9 +142,7 @@ class SpamAssassin_Client
             if ($buffer == "\r") {
                 break;
             }
-
             $headers .= $buffer;
-
         }
 
         $message = '';
@@ -120,13 +154,26 @@ class SpamAssassin_Client
         socket_close($socket);
 
         return array(trim($headers), trim($message));
-
     }
 
+    /**
+     * Parses SpamAssassin output ($header and $message)
+     * 
+     * @param string $header  Output headers
+     * @param string $message Output message
+     * 
+     * @return SpamAssassin_Client_Result Object containing the result
+     */
     protected function parseOutput($header, $message)
     {
         $result = new SpamAssassin_Client_Result();
 
+        /**
+         * Matches the first line in the output. Something like this:
+         * 
+         * SPAMD/1.5 0 EX_OK
+         * SPAMD/1.5 68 service unavailable: TELL commands have not been enabled
+         */
         if (preg_match('/SPAMD\/(\d\.\d) (\d+) (.*)/', $header, $matches)) {
             $result->protocolVersion = $matches[1];
             $result->responseCode    = $matches[2];
@@ -167,7 +214,10 @@ class SpamAssassin_Client
              * it is necessary to check for the X-Spam-Status: header in the
              * processed message headers.
             */
-            if (preg_match('/X-Spam-Status: (Yes|No)\, score=(\d+\.\d) required=(\d+\.\d)/', $header.$message, $matches)) {
+            if (preg_match(
+                  '/X-Spam-Status: (Yes|No)\, score=(\d+\.\d) required=(\d+\.\d)/',
+                  $header.$message,
+                  $matches)) {
 
                 ($matches[1] == 'Yes') ? 
                     $result->isSpam = true :
@@ -179,25 +229,32 @@ class SpamAssassin_Client
 
         }
 
+        /* Used for report/revoke/learn */
         if (preg_match('/DidSet: (\S+)/', $header, $matches)) {
             $result->didSet = true;
         } else {
             $result->didSet = false;
         }
 
+        /* Used for report/revoke/learn */
         if (preg_match('/DidRemove: (\S+)/', $header, $matches)) {
             $result->didRemove = true;
         } else {
             $result->didRemove = false;
         }
 
-        $result->headers   = $header;
-        $result->message   = $message;
+        $result->headers = $header;
+        $result->message = $message;
 
         return $result;
         
     }
 
+    /**
+     * Pings the server to check the connection
+     * 
+     * @return boolean
+     */
     public function ping()
     {
         $socket = $this->getSocket();
@@ -214,6 +271,13 @@ class SpamAssassin_Client
 
     }
 
+    /**
+     * Returns a detailed report if the message is spam or null if it's ham
+     * 
+     * @param string $message Email message
+     * 
+     * @return string Detailed spam report
+     */
     public function getSpamReport($message)
     {
         $result = $this->exec('REPORT_IFSPAM', $message);
@@ -226,27 +290,64 @@ class SpamAssassin_Client
         return $result->message;
     }
 
-
+    /**
+     * Processes the message and returns it's headers
+     * 
+     * This will check if the message is spam or not and return all headers
+     * for the modified processed message. Such as X-Spam-Flag and X-Spam-Status.
+     * 
+     * @param string $message Headers for the modified message
+     * 
+     * @return SpamAssassin_Client_Result Object containing the 
+     */
     public function headers($message)
     {
         return $this->exec('HEADERS', $message)->message;
     }
 
+    /**
+     * Checks if a message is spam with the CHECK protocol command
+     * 
+     * @param string $message Raw email message
+     * 
+     * @return SpamAssassin_Client_Result Object containing the result
+     */
     public function check($message)
     {
         return $this->exec('CHECK', $message);
     }
 
+    /**
+     * Shortcut to check() method that returns a boolean
+     * 
+     * @param string $message Raw email message
+     * 
+     * @return boolean Whether message is spam or not
+     */
     public function isSpam($message)
     {
         return $this->check($message)->isSpam;
     }
 
+    /**
+     * Processes the message, checks it for spam and returning it's modified version
+     * 
+     * @param string $message Raw email message
+     * 
+     * @return SpamAssassin_Client_Result Result details and modified message
+     */
     public function process($message)
     {
         return $this->exec('PROCESS', $message);
     }
 
+    /**
+     * Returns all rules matched by the message
+     * 
+     * @param string $message Raw email message
+     * 
+     * @return array Array containing the names of the rules matched
+     */
     public function symbols($message)
     {
         $result = $this->exec('SYMBOLS', $message);
@@ -260,6 +361,14 @@ class SpamAssassin_Client
         return array_map('trim', $symbols);
     }
 
+    /**
+     * Uses SpamAssassin learning feature with TELL. Must be enabled on the server.
+     * 
+     * @param string $message   Raw email message
+     * @param int    $learnType self::LEARN_SPAM|self::LEARN_FORGET|self::LEARN_HAM
+     * 
+     * @return boolean Whether it did learn or not
+     */
     public function learn($message, $learnType = self::LEARN_SPAM)
     {
         if (!in_array($learnType, $this->learnTypes)) {
@@ -291,7 +400,13 @@ class SpamAssassin_Client
         }
     }
 
-
+    /**
+     * Report message as spam, both local and remote
+     * 
+     * @param string $message Raw email message
+     * 
+     * @return boolean
+     */
     public function report($message)
     {
         $additionalHeaders = array(
@@ -300,10 +415,15 @@ class SpamAssassin_Client
         );
 
         return $this->exec('TELL', $message, $additionalHeaders)->didSet;
-        
     }
 
-
+    /**
+     * Revokes a message previously reported as spam
+     * 
+     * @param string $message Raw email message
+     * 
+     * @return boolean
+     */
     public function revoke($message)
     {
         $additionalHeaders = array(
@@ -312,7 +432,6 @@ class SpamAssassin_Client
         );
 
         return $this->exec('TELL', $message, $additionalHeaders)->didSet;
-        
     }
 
 }
