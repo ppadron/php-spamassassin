@@ -1,6 +1,6 @@
 Subject: Test spam mail (GTUBE)
 Message-ID: <GTUBE1.1010101@example.net>
-Date: Wed, 23 Jul 2003 23:30:00 +0200
+Date: Thu, 29 Apr 2010 23:30:00 +0200
 From: Sender <sender@example.net>
 To: Recipient <recipient@example.net>
 Precedence: junk

@@ -290,4 +290,29 @@ class SpamAssassin_Client
             return $result->didRemove;
         }
     }
+
+
+    public function report($message)
+    {
+        $additionalHeaders = array(
+            "Message-class" => "spam",
+            "Set"           => "local,remote"
+        );
+
+        return $this->exec('TELL', $message, $additionalHeaders)->didSet;
+        
+    }
+
+
+    public function revoke($message)
+    {
+        $additionalHeaders = array(
+            "Message-class" => "ham",
+            "Set"           => "local,remote"
+        );
+
+        return $this->exec('TELL', $message, $additionalHeaders)->didSet;
+        
+    }
+
 }
