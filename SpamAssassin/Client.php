@@ -1,6 +1,6 @@
 <?php
 
-require_once 'SpamAssassin/Exception.php';
+require_once 'SpamAssassin/Client/Exception.php';
 require_once 'SpamAssassin/Client/Result.php';
 
 class SpamAssassin_Client
@@ -53,7 +53,7 @@ class SpamAssassin_Client
         if ($isConnected === false) {
             $errorCode    = socket_last_error();
             $errorMessage = socket_strerror($errorCode);
-            throw new SpamAssassin_Exception("Could not connect to SpamAssassin: {$errorMessage}", $errorCode);
+            throw new SpamAssassin_Client_Exception("Could not connect to SpamAssassin: {$errorMessage}", $errorCode);
         }
 
         socket_set_nonblock($socket);
@@ -133,14 +133,14 @@ class SpamAssassin_Client
             $result->responseMessage = $matches[3];
 
             if ($result->responseCode != 0) {
-                throw new SpamAssassin_Exception(
+                throw new SpamAssassin_Client_Exception(
                     $result->responseMessage,
                     $result->responseCode
                 );
             }
             
         } else {
-            throw new SpamAssassin_Exception('Could not parse response header');
+            throw new SpamAssassin_Client_Exception('Could not parse response header');
         }
 
         if (preg_match('/Content-length: (\d+)/', $header, $matches)) {
@@ -263,7 +263,7 @@ class SpamAssassin_Client
     public function learn($message, $learnType = self::LEARN_SPAM)
     {
         if (!in_array($learnType, $this->learnTypes)) {
-            throw new SpamAssassin_Exception("Invalid learn type ($learnType)");
+            throw new SpamAssassin_Client_Exception("Invalid learn type ($learnType)");
         }
 
         if ($learnType == self::LEARN_SPAM) {
