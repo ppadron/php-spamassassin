@@ -1,3 +1,6 @@
 <?php
 
-class SpamAssassin_Client_Exception extends Exception { }
+class SpamAssassin_Client_Exception extends Exception
+{
+
+}
