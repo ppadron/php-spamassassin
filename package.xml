@@ -13,8 +13,8 @@
   <email>ppadron@php.net</email>
   <active>yes</active>
  </lead>
- <date>2010-04-29</date>
- <time>23:58:29</time>
+ <date>2010-05-03</date>
+ <time>23:23:16</time>
  <version>
   <release>0.1.0</release>
   <api>0.1.0</api>
@@ -59,8 +59,6 @@ Initial release
     <file name="SpamReportTest.php" role="test" />
     <file name="SymbolsTest.php" role="test" />
    </dir> <!-- /tests -->
-   <file name="SpamAssassin_Client-0.2.0.tgz" role="data" />
-   <file name="SpamAssassin_Client-0.2.tgz" role="data" />
   </dir> <!-- / -->
  </contents>
  <dependencies>
@@ -84,40 +82,10 @@ Initial release
     <release>alpha</release>
     <api>alpha</api>
    </stability>
-   <date>2010-04-29</date>
+   <date>2010-05-03</date>
    <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
    <notes>
 Initial release
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>0.2</release>
-    <api>0.2</api>
-   </version>
-   <stability>
-    <release>alpha</release>
-    <api>alpha</api>
-   </stability>
-   <date>2010-04-29</date>
-   <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
-   <notes>
-bugfixes
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>0.2.0</release>
-    <api>0.2.0</api>
-   </version>
-   <stability>
-    <release>alpha</release>
-    <api>alpha</api>
-   </stability>
-   <date>2010-04-29</date>
-   <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
-   <notes>
-bugfixes
    </notes>
   </release>
  </changelog>
