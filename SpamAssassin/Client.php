@@ -43,27 +43,8 @@ class SpamAssassin_Client
      */
     public function __construct(array $params)
     {
-        if (isset($params["socketPath"])) {
-            $this->socketPath = $params["socketPath"];
-        } else {
-            $this->hostname = $params["hostname"];
-            $this->port     = $params["port"];
-        }
-
-        if (isset($params["user"])) {
-            $this->user = $params["user"];
-        }
-
-        if (isset($params["protocolVersion"])) {
-            $this->protocolVersion = $params["protocolVersion"];
-        }
-
-        if (isset($params["enableZlib"])) {
-            $this->enableZlib = $params["enableZlib"];
-        }
-
-        if (isset($params["maxSize"])) {
-            $this->maxSize = $params["maxSize"];
+        foreach ($params as $param => $value) {
+            $this->$param = $value;
         }
     }
 
