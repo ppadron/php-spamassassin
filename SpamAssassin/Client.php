@@ -92,10 +92,10 @@ class SpamAssassin_Client
     {
         $socket = $this->getSocket();
 
-        $contentLenght = strlen($message);
+        $contentLength = strlen($message);
 
         $cmd  = $cmd . " SPAMC/" . $this->protocolVersion . "\r\n";
-        $cmd .= "Content-lenght: " . $contentLenght . "\r\n";
+        $cmd .= "Content-length: " . $contentLength . "\r\n";
 
         if (!empty($this->user)) {
             $cmd .= "User: " .$this->user . "\r\n";
@@ -197,7 +197,7 @@ class SpamAssassin_Client
         }
 
         if (preg_match('/Content-length: (\d+)/', $header, $matches)) {
-            $result->contentLenght = $matches[1];
+            $result->contentLength = $matches[1];
         }
 
         if (preg_match(
