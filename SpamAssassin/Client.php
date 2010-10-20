@@ -26,6 +26,7 @@ class SpamAssassin_Client
     protected $socketPath;
     protected $socket;
     protected $protocolVersion = 1.5;
+    protected $enableZlib;
 
     /**
      * Class constructor
@@ -54,6 +55,10 @@ class SpamAssassin_Client
 
         if (isset($params["protocolVersion"])) {
             $this->protocolVersion = $params["protocolVersion"];
+        }
+
+        if (isset($params["enableZlib"])) {
+            $this->enableZlib = $params["enableZlib"];
         }
     }
 
@@ -96,6 +101,11 @@ class SpamAssassin_Client
 
         $cmd  = $cmd . " SPAMC/" . $this->protocolVersion . "\r\n";
         $cmd .= "Content-length: " . $contentLength . "\r\n";
+
+        if ($this->enableZlib && function_exists('gzcompress')) {
+            $cmd    .= "Compress: zlib\r\n";
+            $message = gzcompress($message);
+        }
 
         if (!empty($this->user)) {
             $cmd .= "User: " .$this->user . "\r\n";
