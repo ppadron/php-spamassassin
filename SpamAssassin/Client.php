@@ -265,7 +265,7 @@ class SpamAssassin_Client
     {
         $socket = $this->getSocket();
 
-        $this->write($socket, "PING SPAMC/{$this->protocolVersion}\n");
+        $this->write($socket, "PING SPAMC/{$this->protocolVersion}\r\n\r\n");
 
         list($headers, $message) = $this->read($socket);
 
