@@ -60,6 +60,10 @@ class SpamAssassin_Client
         if (isset($params["enableZlib"])) {
             $this->enableZlib = $params["enableZlib"];
         }
+
+        if (isset($params["maxSize"])) {
+            $this->maxSize = $params["maxSize"];
+        }
     }
 
     /**
@@ -98,6 +102,14 @@ class SpamAssassin_Client
         $socket = $this->getSocket();
 
         $contentLength = strlen($message);
+
+        if (!empty($this->maxSize)) {
+            if ($contentLength > $this->maxSize) {
+                throw new SpamAssassin_Client_Exception(
+                    "Message exceeds the maximum allowed size of {$this->maxSize} kbytes"
+                );
+            }
+        }
 
         $cmd  = $cmd . " SPAMC/" . $this->protocolVersion . "\r\n";
         $cmd .= "Content-length: " . $contentLength . "\r\n";
