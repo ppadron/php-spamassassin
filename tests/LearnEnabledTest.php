@@ -38,8 +38,10 @@ class LearnEnabledTest extends BaseTestCase
 
     public function testShouldLearnAndMessageAsSpam()
     {
-        $this->assertTrue($this->sa->learn($this->gtube, SpamAssassin_Client::LEARN_SPAM));
-        $this->assertTrue($this->sa->learn($this->gtube, SpamAssassin_Client::LEARN_FORGET));
+        $message = $this->getMessage('Spam_GTUBE.txt');
+
+        $this->assertTrue($this->sa->learn($message, SpamAssassin_Client::LEARN_SPAM));
+        $this->assertTrue($this->sa->learn($message, SpamAssassin_Client::LEARN_FORGET));
     }
 
     public function testShouldLearnMessageAsHam()
