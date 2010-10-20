@@ -21,8 +21,9 @@ class SpamAssassin_Client
         self::LEARN_FORGET
     );
 
-    protected $hostname;
-    protected $port;
+    protected $hostname = 'localhost';
+    protected $port     = '783';
+    
     protected $socketPath;
     protected $socket;
     protected $protocolVersion = 1.5;
