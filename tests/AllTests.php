@@ -1,34 +1,20 @@
 <?php
 
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__) . '/ConnectionTest.php';
-require_once dirname(__FILE__) . '/LearnEnabledTest.php';
-require_once dirname(__FILE__) . '/LearnDisabledTest.php';
-require_once dirname(__FILE__) . '/CheckTest.php';
-require_once dirname(__FILE__) . '/ProcessTest.php';
-require_once dirname(__FILE__) . '/HeadersTest.php';
-require_once dirname(__FILE__) . '/SymbolsTest.php';
-require_once dirname(__FILE__) . '/SpamReportTest.php';
-require_once dirname(__FILE__) . '/RevokeTest.php';
-require_once dirname(__FILE__) . '/ReportTest.php';
 
 class AllTests {
 
     public static function suite()
     {
-        $suite = new PHPUnit_Framework_TestSuite('PHPUnit');
+        $suite    = new PHPUnit_Framework_TestSuite('PHPUnit');
+        $iterator = new GlobIterator(dirname(__FILE__) . '/*Test.php');
 
-        $suite->addTestSuite('ConnectionTest');
-        $suite->addTestSuite('LearnEnabledTest');
-        $suite->addTestSuite('LearnDisabledTest');
-        $suite->addTestSuite('SpamReportTest');
-        $suite->addTestSuite('HeadersTest');
-        $suite->addTestSuite('CheckTest');
-        $suite->addTestSuite('ProcessTest');
-        $suite->addTestSuite('SymbolsTest');
-        $suite->addTestSuite('ReportTest');
-        $suite->addTestSuite('RevokeTest');
-
+        foreach ($iterator as $file) {
+            require_once $file->getPathname();
+            $className = str_replace('.php', '', $file->getFilename());
+            $suite->addTestSuite($className);
+        }
+        
         return $suite;
     }
 }
