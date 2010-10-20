@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
-    http://pear.php.net/dtd/tasks-1.0.xsd
-    http://pear.php.net/dtd/package-2.0
-    http://pear.php.net/dtd/package-2.0.xsd">
+<package packagerversion="1.9.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0     http://pear.php.net/dtd/tasks-1.0.xsd     http://pear.php.net/dtd/package-2.0     http://pear.php.net/dtd/package-2.0.xsd">
  <name>SpamAssassin_Client</name>
  <channel>pear.w3p.com.br</channel>
  <summary>Spamd protocol client for PHP</summary>
@@ -13,11 +10,11 @@
   <email>ppadron@php.net</email>
   <active>yes</active>
  </lead>
- <date>2010-05-04</date>
- <time>13:59:29</time>
+ <date>2010-10-20</date>
+ <time>14:00:04</time>
  <version>
-  <release>0.1.0</release>
-  <api>0.1.0</api>
+  <release>0.2.0</release>
+  <api>0.2.0</api>
  </version>
  <stability>
   <release>alpha</release>
@@ -25,41 +22,39 @@
  </stability>
  <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
  <notes>
-Initial release
+new option &quot;maxSize&quot; to set maximum message size to be processed by spamd
+new option &quot;enableZlib&quot; to enable message compression when sending it to spamd
+fix: &quot;EOF during headers&quot; error in PING command
+fix: Content-length header was not sent because of a typo
+fix: some organizational changes in the test suite
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <dir name="SpamAssassin">
-    <dir name="Client">
-     <file name="Exception.php" role="php" />
-     <file name="Result.php" role="php" />
-    </dir> <!-- /SpamAssassin/Client -->
-    <file name="Client.php" role="php" />
-   </dir> <!-- /SpamAssassin -->
-   <dir name="tests">
-    <dir name="files">
-     <file name="Ham_testCheckHamMessage.txt" role="test" />
-     <file name="Ham_testLearnMessageAsHam.txt" role="test" />
-     <file name="Ham_testReportWithHamMessage.txt" role="test" />
-     <file name="HeadersTest_Ham.txt" role="test" />
-     <file name="Spam_GTUBE.txt" role="test" />
-     <file name="Spam_testCheckSpamMessage.txt" role="test" />
-    </dir> <!-- /tests/files -->
-    <file name="AllTests.php" role="test" />
-    <file name="BaseTestCase.php" role="test" />
-    <file name="CheckTest.php" role="test" />
-    <file name="ConnectionTest.php" role="test" />
-    <file name="HeadersTest.php" role="test" />
-    <file name="LearnDisabledTest.php" role="test" />
-    <file name="LearnEnabledTest.php" role="test" />
-    <file name="phpunit.xml" role="test" />
-    <file name="ProcessTest.php" role="test" />
-    <file name="ReportTest.php" role="test" />
-    <file name="RevokeTest.php" role="test" />
-    <file name="SpamReportTest.php" role="test" />
-    <file name="SymbolsTest.php" role="test" />
-   </dir> <!-- /tests -->
-  </dir> <!-- / -->
+   <file baseinstalldir="/" md5sum="adac86aa014964d68b219ad2e83151c5" name="SpamAssassin/Client.php" role="php" />
+   <file baseinstalldir="/" md5sum="a944d95507b5e2d8705f0432c6596a39" name="SpamAssassin/Client/Exception.php" role="php" />
+   <file baseinstalldir="/" md5sum="893c0d356e683f00973431b2e1e8a53d" name="SpamAssassin/Client/Result.php" role="php" />
+   <file baseinstalldir="/" md5sum="2fb06c98b4210f7b74146a84dc8b6844" name="tests/AllTests.php" role="test" />
+   <file baseinstalldir="/" md5sum="6f1229efc09f0331bd32cf11f232f19c" name="tests/BaseTestCase.php" role="test" />
+   <file baseinstalldir="/" md5sum="3943f38049073e15c9aaecc5947872e2" name="tests/CheckTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="97c2f77238126fa362084d877cf34a39" name="tests/ConnectionTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="8bcc060b936f3d5d3228305be08fe077" name="tests/HeadersTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="c72554e97bd2d0ff09b94270052ffce3" name="tests/LearnDisabledTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="2cf8787e6ab2ca3e432c94defaee5f5f" name="tests/LearnEnabledTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="69d370ce04ac656f07731c799bf23c7d" name="tests/MaxSizeTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="fb995d6f9bb1658eab015e5135a53612" name="tests/phpunit.xml" role="test" />
+   <file baseinstalldir="/" md5sum="2f9536a6b5776416a473b4ea09472199" name="tests/ProcessTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="31f6c32c9be93f6336e5bea9070e2133" name="tests/ReportTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="4e319492b0e8911237298c9c591a0faf" name="tests/RevokeTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="13bcb9e29b2580060cfebdacf0a26446" name="tests/SpamReportTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="8862109a22ffd137f10657cd61774999" name="tests/SymbolsTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="fc43c85db4c77fbd674513f80b2e4cba" name="tests/ZlibCompressionTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="87e210ad84453a1a62e1d3a5e5fb1301" name="tests/files/Ham_testCheckHamMessage.txt" role="test" />
+   <file baseinstalldir="/" md5sum="d076e0697af5539bfa03a924ec35bd28" name="tests/files/Ham_testLearnMessageAsHam.txt" role="test" />
+   <file baseinstalldir="/" md5sum="87e210ad84453a1a62e1d3a5e5fb1301" name="tests/files/Ham_testReportWithHamMessage.txt" role="test" />
+   <file baseinstalldir="/" md5sum="779a62b76a28a9d5d3ad60ba7ce5fcad" name="tests/files/HeadersTest_Ham.txt" role="test" />
+   <file baseinstalldir="/" md5sum="c052f06053f60ae1c0fd2e7ef0ac31a0" name="tests/files/Spam_GTUBE.txt" role="test" />
+   <file baseinstalldir="/" md5sum="007527abcc33997cbe91749d385df0ae" name="tests/files/Spam_testCheckSpamMessage.txt" role="test" />
+  </dir>
  </contents>
  <dependencies>
   <required>
@@ -86,6 +81,25 @@ Initial release
    <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
    <notes>
 Initial release
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.2.0</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2010-10-20</date>
+   <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</license>
+   <notes>
+new option &quot;maxSize&quot; to set maximum message size to be processed by spamd
+new option &quot;enableZlib&quot; to enable message compression when sending it to spamd
+fix: &quot;EOF during headers&quot; error in PING command
+fix: Content-length header was not sent because of a typo
+fix: some organizational changes in the test suite
    </notes>
   </release>
  </changelog>
