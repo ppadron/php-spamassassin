@@ -78,6 +78,7 @@ class SpamAssassin_Client
     protected function exec($cmd, $message, array $additionalHeaders = array())
     {
         $socket        = $this->getSocket();
+        $message      .= "\r\n";
         $contentLength = strlen($message);
 
         if (!empty($this->maxSize)) {
@@ -108,7 +109,7 @@ class SpamAssassin_Client
 
         $cmd .= "\r\n";
         $cmd .= $message;
-        $cmd .= "\r\n\r\n";
+        $cmd .= "\r\n";
 
         $this->write($socket, $cmd);
 
