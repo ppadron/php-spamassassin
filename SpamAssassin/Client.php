@@ -281,14 +281,7 @@ class SpamAssassin_Client
      */
     public function getSpamReport($message)
     {
-        $result = $this->exec('REPORT_IFSPAM', $message);
-
-        // should return null if message is not spam
-        if ($result->isSpam === false) {
-            return null;
-        }
-
-        return $result->message;
+        return $this->exec('REPORT', $message);
     }
 
     /**
