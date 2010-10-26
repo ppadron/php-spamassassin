@@ -54,20 +54,16 @@ class SpamAssassin_Client
     protected function getSocket()
     {
         if (!empty($this->socketPath)) {
-            $socket      = socket_create(AF_UNIX, SOCK_STREAM, 0);
-            $isConnected = @socket_connect($socket, $this->socketPath);
+            $socket = fsockopen('unix://' . $this->socketPath, NULL, $errno, $errstr);
         } else {
-            $socket      = socket_create(AF_INET, SOCK_STREAM, getprotobyname("tcp"));
-            $isConnected = @socket_connect($socket, $this->hostname, $this->port);
+            $socket = fsockopen($this->hostname, $this->port, $errno, $errstr);
         }
 
-        if ($isConnected === false) {
-            $errorCode    = socket_last_error();
-            $errorMessage = socket_strerror($errorCode);
-            throw new SpamAssassin_Client_Exception("Could not connect to SpamAssassin: {$errorMessage}", $errorCode);
+        if (!$socket) {
+            throw new SpamAssassin_Client_Exception(
+                "Could not connect to SpamAssassin: {$errstr}", $errno
+            );
         }
-
-        socket_set_nonblock($socket);
 
         return $socket;
     }
@@ -81,8 +77,7 @@ class SpamAssassin_Client
      */
     protected function exec($cmd, $message, array $additionalHeaders = array())
     {
-        $socket = $this->getSocket();
-
+        $socket        = $this->getSocket();
         $contentLength = strlen($message);
 
         if (!empty($this->maxSize)) {
@@ -94,7 +89,7 @@ class SpamAssassin_Client
         }
 
         $cmd  = $cmd . " SPAMC/" . $this->protocolVersion . "\r\n";
-        $cmd .= "Content-length: " . $contentLength . "\r\n";
+        $cmd .= "Content-length: {$contentLength}\r\n";
 
         if ($this->enableZlib && function_exists('gzcompress')) {
             $cmd    .= "Compress: zlib\r\n";
@@ -132,8 +127,7 @@ class SpamAssassin_Client
      */
     protected function write($socket, $data)
     {
-        socket_write($socket, $data, strlen($data));
-        socket_shutdown($socket, 1);
+        fwrite($socket, $data);
     }
 
     /**
@@ -146,23 +140,22 @@ class SpamAssassin_Client
     protected function read($socket)
     {
         $headers = '';
-
-        while (($buffer = @socket_read($socket, 128, PHP_NORMAL_READ)) !== '') {
-
-            if ($buffer == "\r") {
-                break;
-            }
-            $headers .= $buffer;
-        }
-
         $message = '';
 
-        while (($buffer = socket_read($socket, 128, PHP_NORMAL_READ)) !== '') {
-            $message .= $buffer;
+        while (true) {
+            $buffer   = fgets($socket, 128);
+            $headers .= $buffer;
+            if ($buffer == "\r\n" || feof($socket)) {
+                break;
+            }            
         }
 
-        socket_close($socket);
+        while (!feof($socket)) {
+            $message .= fgets($socket, 128);
+        }
 
+        fclose($socket);
+        
         return array(trim($headers), trim($message));
     }
 
@@ -270,7 +263,6 @@ class SpamAssassin_Client
         $socket = $this->getSocket();
 
         $this->write($socket, "PING SPAMC/{$this->protocolVersion}\r\n\r\n");
-
         list($headers, $message) = $this->read($socket);
 
         if (strpos($headers, "PONG") === false) {
@@ -278,7 +270,6 @@ class SpamAssassin_Client
         }
 
         return true;
-
     }
 
     /**
