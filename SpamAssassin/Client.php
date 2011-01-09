@@ -26,7 +26,7 @@ class SpamAssassin_Client
     
     protected $socketPath;
     protected $socket;
-    protected $protocolVersion = 1.5;
+    protected $protocolVersion = '1.5';
     protected $enableZlib;
 
     /**
