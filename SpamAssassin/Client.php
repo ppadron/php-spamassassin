@@ -325,6 +325,18 @@ class SpamAssassin_Client
     }
 
     /**
+     * Shortcut to check() method that returns a float score
+     * 
+     * @param string $message Raw email message
+     * 
+     * @return float Spam Score of the Message
+     */
+	public function getScore($message)
+	{
+		return $this->check($message)->score;
+	}
+
+    /**
      * Processes the message, checks it for spam and returning it's modified version
      * 
      * @param string $message Raw email message
