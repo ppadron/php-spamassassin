@@ -25,11 +25,11 @@ class SpamAssassin_Client_Result
     public $responseMessage;
 
     /**
-     * Response content lenght
+     * Response content length
      * 
      * @var int
      */
-    public $contentLenght;
+    public $contentLength;
 
     /**
      * SpamAssassin score
