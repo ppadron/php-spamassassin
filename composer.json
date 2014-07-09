@@ -15,7 +15,7 @@
         "php": ">=5.3.0"
     },
     "autoload": {
-        "classmap": ["src/"]
+        "classmap": ["SpamAssassin/"]
     },
     "minimum-stability": "dev"
 }
