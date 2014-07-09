@@ -1,8 +1,5 @@
 <?php
 
-require_once 'SpamAssassin/Client/Exception.php';
-require_once 'SpamAssassin/Client/Result.php';
-
 /**
  * @category SpamAssassin
  * @package  SpamAssassin_Client
