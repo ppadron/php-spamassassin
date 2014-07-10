@@ -13,3 +13,4 @@ Add the following lines to your `composer.json` file and then run `php composer.
     }
 }
 ```
+
