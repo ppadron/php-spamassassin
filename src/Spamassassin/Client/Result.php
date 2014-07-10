@@ -1,5 +1,7 @@
 <?php
 
+namespace Spamassassin\Client;
+
 /**
  * Represents the result from an API call on the SpamAssassin server
  *
@@ -8,7 +10,7 @@
  * @author   Pedro Padron <ppadron@w3p.com.br>
  * @license  http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
  */
-class SpamAssassin_Client_Result
+class Result
 {
     /**
      * Response code.

@@ -1,4 +1,8 @@
 <?php
+namespace Spamassassin;
+
+use Spamassassin\Client\Result,
+    Spamassassin\Client\Exception;
 
 /**
  * @category SpamAssassin
@@ -6,7 +10,7 @@
  * @author   Pedro Padron <ppadron@w3p.com.br>
  * @license  http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
  */
-class SpamAssassin_Client
+class Client
 {
     const LEARN_SPAM   = 0;
     const LEARN_HAM    = 1;
@@ -57,7 +61,7 @@ class SpamAssassin_Client
         }
 
         if (!$socket) {
-            throw new SpamAssassin_Client_Exception(
+            throw new Exception(
                 "Could not connect to SpamAssassin: {$errstr}", $errno
             );
         }
@@ -80,7 +84,7 @@ class SpamAssassin_Client
 
         if (!empty($this->maxSize)) {
             if ($contentLength > $this->maxSize) {
-                throw new SpamAssassin_Client_Exception(
+                throw new Exception(
                     "Message exceeds the maximum allowed size of {$this->maxSize} kbytes"
                 );
             }
@@ -163,11 +167,11 @@ class SpamAssassin_Client
      * @param string $header  Output headers
      * @param string $message Output message
      *
-     * @return SpamAssassin_Client_Result Object containing the result
+     * @return Result Object containing the result
      */
     protected function parseOutput($header, $message)
     {
-        $result = new SpamAssassin_Client_Result();
+        $result = new Result();
 
         /**
          * Matches the first line in the output. Something like this:
@@ -181,14 +185,14 @@ class SpamAssassin_Client
             $result->responseMessage = $matches[3];
 
             if ($result->responseCode != 0) {
-                throw new SpamAssassin_Client_Exception(
+                throw new Exception(
                     $result->responseMessage,
                     $result->responseCode
                 );
             }
 
         } else {
-            throw new SpamAssassin_Client_Exception('Could not parse response header');
+            throw new Exception('Could not parse response header');
         }
 
         if (preg_match('/Content-length: (\d+)/', $header, $matches)) {
@@ -290,7 +294,7 @@ class SpamAssassin_Client
      *
      * @param string $message Headers for the modified message
      *
-     * @return SpamAssassin_Client_Result Object containing the
+     * @return Result Object containing the
      */
     public function headers($message)
     {
@@ -302,7 +306,7 @@ class SpamAssassin_Client
      *
      * @param string $message Raw email message
      *
-     * @return SpamAssassin_Client_Result Object containing the result
+     * @return Result Object containing the result
      */
     public function check($message)
     {
@@ -338,7 +342,7 @@ class SpamAssassin_Client
      *
      * @param string $message Raw email message
      *
-     * @return SpamAssassin_Client_Result Result details and modified message
+     * @return Result Result details and modified message
      */
     public function process($message)
     {
@@ -376,7 +380,7 @@ class SpamAssassin_Client
     public function learn($message, $learnType = self::LEARN_SPAM)
     {
         if (!in_array($learnType, $this->learnTypes)) {
-            throw new SpamAssassin_Client_Exception("Invalid learn type ($learnType)");
+            throw new Exception("Invalid learn type ($learnType)");
         }
 
         if ($learnType == self::LEARN_SPAM) {
