@@ -6,7 +6,7 @@ use Spamassassin\Client\Result,
 
 /**
  * @category SpamAssassin
- * @package  SpamAssassin_Client
+ *
  * @author   Pedro Padron <ppadron@w3p.com.br>
  * @license  http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
  */
@@ -75,6 +75,10 @@ class Client
      * @param string $cmd               Protocol command to be executed
      * @param string $message           Full email message
      * @param array  $additionalHeaders Associative array with additional headers
+     *
+     * @throws Exception
+     *
+     * @return Result
      */
     protected function exec($cmd, $message, array $additionalHeaders = array())
     {
@@ -173,7 +177,7 @@ class Client
     {
         $result = new Result();
 
-        /**
+        /*
          * Matches the first line in the output. Something like this:
          *
          * SPAMD/1.5 0 EX_OK
@@ -257,8 +261,8 @@ class Client
 
     /**
      * Pings the server to check the connection
-     *
-     * @return boolean
+     * 
+     * @return bool
      */
     public function ping()
     {
@@ -278,8 +282,8 @@ class Client
      * Returns a detailed report if the message is spam or null if it's ham
      *
      * @param string $message Email message
-     *
-     * @return string Detailed spam report
+     * 
+     * @return Result Detailed spam report
      */
     public function getSpamReport($message)
     {
@@ -375,7 +379,9 @@ class Client
      * @param string $message   Raw email message
      * @param int    $learnType self::LEARN_SPAM|self::LEARN_FORGET|self::LEARN_HAM
      *
-     * @return boolean Whether it did learn or not
+     * @throws Exception when invalid learnType is passed
+     *
+     * @return bool Whether it did learn or not
      */
     public function learn($message, $learnType = self::LEARN_SPAM)
     {
@@ -383,25 +389,25 @@ class Client
             throw new Exception("Invalid learn type ($learnType)");
         }
 
-        if ($learnType == self::LEARN_SPAM) {
+        if ($learnType === self::LEARN_SPAM) {
             $additionalHeaders = array(
-                "Message-class" => "spam",
-                "Set"           => "local"
+                'Message-class' => 'spam',
+                'Set' => 'local',
             );
-        } else if ($learnType == self::LEARN_HAM) {
+        } elseif ($learnType === self::LEARN_HAM) {
             $additionalHeaders = array(
-                "Message-class" => "ham",
-                "Set"           => "local"
+                'Message-class' => 'ham',
+                'Set' => 'local',
             );
-        } else if ($learnType == self::LEARN_FORGET) {
+        } elseif ($learnType === self::LEARN_FORGET) {
             $additionalHeaders = array(
-                "Remove" => "local"
+                'Remove' => 'local',
             );
         }
 
         $result = $this->exec('TELL', $message, $additionalHeaders);
 
-        if ($learnType == self::LEARN_SPAM || $learnType == self::LEARN_HAM) {
+        if ($learnType === self::LEARN_SPAM || $learnType === self::LEARN_HAM) {
             return $result->didSet;
         } else {
             return $result->didRemove;
@@ -409,37 +415,36 @@ class Client
     }
 
     /**
-     * Report message as spam, both local and remote
-     *
+     * Report message as spam, both local and remote.
+     * 
      * @param string $message Raw email message
-     *
-     * @return boolean
+     * 
+     * @return bool
      */
     public function report($message)
     {
         $additionalHeaders = array(
-            "Message-class" => "spam",
-            "Set"           => "local,remote"
+            'Message-class' => 'spam',
+            'Set' => 'local,remote',
         );
 
         return $this->exec('TELL', $message, $additionalHeaders)->didSet;
     }
 
     /**
-     * Revokes a message previously reported as spam
-     *
+     * Revokes a message previously reported as spam.
+     * 
      * @param string $message Raw email message
-     *
-     * @return boolean
+     * 
+     * @return bool
      */
     public function revoke($message)
     {
         $additionalHeaders = array(
-            "Message-class" => "ham",
-            "Set"           => "local,remote"
+            'Message-class' => 'ham',
+            'Set' => 'local,remote',
         );
 
         return $this->exec('TELL', $message, $additionalHeaders)->didSet;
     }
-
 }

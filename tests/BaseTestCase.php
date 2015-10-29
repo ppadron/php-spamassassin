@@ -5,6 +5,7 @@ require_once 'SpamAssassin/Client.php';
 
 class BaseTestCase extends PHPUnit_Framework_TestCase
 {
+    /** @var SpamAssassin_Client */
     protected $sa;
     protected $gtube;
     protected $ham;
