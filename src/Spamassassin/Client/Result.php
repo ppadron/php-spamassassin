@@ -13,6 +13,13 @@ namespace Spamassassin\Client;
 class Result
 {
     /**
+     * The protocol version of the server response
+     *
+     * @var string
+     */
+    public $protocolVersion;
+
+    /**
      * Response code.
      * 
      * @var int
@@ -56,9 +63,25 @@ class Result
 
     /**
      * Raw output from SpamAssassin server
-     * 
+     *
      * @var string
      */
-    public $output;
+    public $message;
 
+    /**
+     * Output headers
+     *
+     * @var string
+     */
+    public $headers;
+
+    /**
+     * @var bool
+     */
+    public $didSet;
+
+    /**
+     * @var bool
+     */
+    public $didRemove;
 }
