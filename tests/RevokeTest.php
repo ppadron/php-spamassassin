@@ -1,7 +1,4 @@
 <?php
-
-require_once 'BaseTestCase.php';
-
 class RevokeTest extends BaseTestCase
 {
     public function setUp()

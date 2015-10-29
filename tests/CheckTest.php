@@ -1,7 +1,5 @@
 <?php
 
-require_once 'BaseTestCase.php';
-
 class CheckTest extends BaseTestCase
 {
     public function testShouldBeAbleToCheckSpamMessage()

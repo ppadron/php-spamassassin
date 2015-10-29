@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
+<phpunit
+        backupGlobals               = "false"
+        backupStaticAttributes      = "false"
+        colors                      = "true"
+        convertErrorsToExceptions   = "true"
+        convertNoticesToExceptions  = "true"
+        convertWarningsToExceptions = "true"
+        processIsolation            = "false"
+        stopOnFailure               = "false"
+        syntaxCheck                 = "false"
+        bootstrap                   = "vendor/autoload.php" >
+
+    <testsuites>
+        <testsuite name="SpamAssassin Test Suite">
+            <directory>tests/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>SpamAssassin</directory>
+        </whitelist>
+    </filter>
+
+    <php>
+        <var name="PHPUNIT_SA_HOST" value="127.0.0.1"/>
+        <var name="PHPUNIT_SA_PORT" value="783"/>
+        <var name="PHPUNIT_SA_USER" value="ppadron"/>
+        <var name="PHPUNIT_SA_PROTOCOL_VERSION" value="1.5"/>
+        <var name="PHPUNIT_SA_LEARN_ENABLED" value="0"/>
+    </php>
+</phpunit>

@@ -1,11 +1,9 @@
 <?php
-
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'SpamAssassin/Client.php';
+use Spamassassin\Client;
 
 class BaseTestCase extends PHPUnit_Framework_TestCase
 {
-    /** @var SpamAssassin_Client */
+    /** @var Client */
     protected $sa;
     protected $gtube;
     protected $ham;
@@ -29,7 +27,7 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
 
         $params["protocolVersion"] = $GLOBALS["PHPUNIT_SA_PROTOCOL_VERSION"];
         $this->params = $params;
-        $this->sa     = new SpamAssassin_Client($params);
+        $this->sa     = new Client($params);
         $this->gtube  = $this->getMessage('Spam_GTUBE.txt');
         $this->ham    = $this->getMessage('Ham_testCheckHamMessage.txt');
     }

@@ -1,21 +1,24 @@
 {
     "name": "webeith/php-spamassassin",
-    "description": "PHP tool to use unix spamassassin service",
+    "description": "Spamd protocol client for PHP. PHP package that implements the spamd protocol specification",
     "keywords": ["PHP", "spamassassin"],
-    "homepage": "https://github.com/webeith/php-spamassassin",
-    "license": "LGPL",
-    "type": "library",
+    "license": "Apache-2.0",
     "authors": [
         {
-        "name": "Pedro Padron",
-        "email": "ppadron@php.net"
-    }
+            "name": "Pedro Padron",
+            "email": "ppadron@php.net"
+        }
     ],
     "require": {
         "php": ">=5.3.0"
     },
-    "autoload": {
-        "classmap": ["src/"]
+    "require-dev": {
+        "phpunit/phpunit": "~4.3.0"
     },
-    "minimum-stability": "dev"
+    "autoload": {
+        "classmap" : ["src/Spamassassin/"]
+    },
+    "autoload-dev": {
+        "classmap" : ["tests/"]
+    }
 }

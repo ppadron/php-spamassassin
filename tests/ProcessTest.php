@@ -1,7 +1,4 @@
 <?php
-
-require_once 'BaseTestCase.php';
-
 class ProcessTest extends BaseTestCase
 {
     public function testShouldReturnProcessedMessage()

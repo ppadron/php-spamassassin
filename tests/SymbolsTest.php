@@ -1,7 +1,4 @@
 <?php
-
-require_once 'BaseTestCase.php';
-
 class SymbolsTest extends BaseTestCase
 {
     public function testShouldReturnRuleNamesForSpamMessage()

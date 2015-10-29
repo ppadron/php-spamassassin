@@ -1,6 +1,6 @@
 <?php
 
-require_once 'BaseTestCase.php';
+use Spamassassin\Client;
 
 class HeadersTest extends BaseTestCase
 {
@@ -28,7 +28,7 @@ class HeadersTest extends BaseTestCase
     public function testShouldReturnProcessedSpamMessageHeaders()
     {
         $this->params["protocolVersion"] = 1.5;
-        $sa = new SpamAssassin_Client($this->params);
+        $sa = new Client($this->params);
 
         $message = $this->getMessage('Spam_GTUBE.txt');
         $headers = $sa->headers($message);
@@ -39,7 +39,7 @@ class HeadersTest extends BaseTestCase
     public function testShouldReturnProcessedHamMessageHeaders()
     {
         $this->params["protocolVersion"] = 1.5;
-        $sa = new SpamAssassin_Client($this->params);
+        $sa = new Client($this->params);
 
         $message = $this->getMessage('HeadersTest_Ham.txt');
         $headers = $sa->headers($message);
@@ -50,7 +50,7 @@ class HeadersTest extends BaseTestCase
     public function testShouldAlsoWorkWithProtocol13()
     {
         $this->params["protocolVersion"] = 1.3;
-        $sa = new SpamAssassin_Client($this->params);
+        $sa = new Client($this->params);
         $message = $this->getMessage('HeadersTest_Ham.txt');
         $headers = $sa->headers($message);
 
@@ -60,7 +60,7 @@ class HeadersTest extends BaseTestCase
     public function testShouldAlsoWorkWithProtocol12()
     {
         $this->params["protocolVersion"] = 1.2;
-        $sa = new SpamAssassin_Client($this->params);
+        $sa = new Client($this->params);
         $message = $this->getMessage('HeadersTest_Ham.txt');
         $headers = $sa->headers($message);
 

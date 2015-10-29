@@ -1,6 +1,6 @@
 <?php
 
-require_once 'BaseTestCase.php';
+use Spamassassin\Client;
 
 class LearnDisabledTest extends BaseTestCase
 {
@@ -30,21 +30,21 @@ class LearnDisabledTest extends BaseTestCase
 
         $params["protocolVersion"] = $GLOBALS["PHPUNIT_SA_PROTOCOL_VERSION"];
 
-        $this->sa = new SpamAssassin_Client($params);
+        $this->sa = new Client($params);
     }
 
     public function testShouldThrowExceptionIfLearningIsDisabled()
     {
         $message = $this->getMessage('Spam_GTUBE.txt');
-        $this->expectedException = 'SpamAssassin_Client_Exception';
-        $this->sa->learn($message, SpamAssassin_Client::LEARN_SPAM);
+        $this->setExpectedException('Spamassassin\Client\Exception');
+        $this->sa->learn($message, Client::LEARN_SPAM);
     }
 
     public function testShouldThrowExceptionWhenForgettingIfLearningIsDisabled()
     {
         $message = $this->getMessage('Spam_GTUBE.txt');
-        $this->expectedException = 'SpamAssassin_Client_Exception';
-        $this->sa->learn($message, SpamAssassin_Client::LEARN_FORGET);
+        $this->setExpectedException('Spamassassin\Client\Exception');
+        $this->sa->learn($message, Client::LEARN_FORGET);
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-require_once 'BaseTestCase.php';
+use Spamassassin\Client;
 
 class LearnEnabledTest extends BaseTestCase
 {
@@ -32,7 +32,7 @@ class LearnEnabledTest extends BaseTestCase
 
         $params["protocolVersion"] = $GLOBALS["PHPUNIT_SA_PROTOCOL_VERSION"];
 
-        $this->sa    = new SpamAssassin_Client($params);
+        $this->sa    = new Client($params);
 
     }
 
@@ -40,16 +40,16 @@ class LearnEnabledTest extends BaseTestCase
     {
         $message = $this->getMessage('Spam_GTUBE.txt');
 
-        $this->assertTrue($this->sa->learn($message, SpamAssassin_Client::LEARN_SPAM));
-        $this->assertTrue($this->sa->learn($message, SpamAssassin_Client::LEARN_FORGET));
+        $this->assertTrue($this->sa->learn($message, Client::LEARN_SPAM));
+        $this->assertTrue($this->sa->learn($message, Client::LEARN_FORGET));
     }
 
     public function testShouldLearnMessageAsHam()
     {
         $message = $this->getMessage('Ham_testLearnMessageAsHam.txt');
 
-        $this->assertTrue($this->sa->learn($message, SpamAssassin_Client::LEARN_HAM));
-        $this->assertTrue($this->sa->learn($message, SpamAssassin_Client::LEARN_FORGET));
+        $this->assertTrue($this->sa->learn($message, Client::LEARN_HAM));
+        $this->assertTrue($this->sa->learn($message, Client::LEARN_FORGET));
     }
 
     public function testShouldNotLearnIfMessageIsAlreadyKnown()
@@ -57,13 +57,13 @@ class LearnEnabledTest extends BaseTestCase
         $message = $this->getMessage('Ham_testLearnMessageAsHam.txt');
 
         /* should learn in the first call */
-        $this->assertTrue($this->sa->learn($message, SpamAssassin_Client::LEARN_HAM));
+        $this->assertTrue($this->sa->learn($message, Client::LEARN_HAM));
 
         /* should fail in the second call because message is already known */
-        $this->assertFalse($this->sa->learn($message, SpamAssassin_Client::LEARN_HAM));
+        $this->assertFalse($this->sa->learn($message, Client::LEARN_HAM));
 
         /* cleanup (forget message) */
-        $this->assertTrue($this->sa->learn($message, SpamAssassin_Client::LEARN_FORGET));
+        $this->assertTrue($this->sa->learn($message, Client::LEARN_FORGET));
     }
 
 }

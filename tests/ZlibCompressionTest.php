@@ -1,6 +1,5 @@
 <?php
-
-require_once 'BaseTestCase.php';
+use Spamassassin\Client;
 
 class ZlibCompressionTest extends BaseTestCase
 {
@@ -9,7 +8,7 @@ class ZlibCompressionTest extends BaseTestCase
         $params = $this->params;
         $params['enableZlib'] = true;
 
-        $sa     = new SpamAssassin_Client($params);
+        $sa     = new Client($params);
         $result = $sa->process($this->gtube);
         
         $this->assertTrue($result->isSpam);
