@@ -28,3 +28,4 @@ A big *thank you* to all [our contributors](https://github.com/templateria/php-s
 * [Buharin Eugene](https://github.com/webeith)
 * [Konstantin Pereyaslov](https://github.com/perk11)
 * [Christiaan Baartse](https://github.com/christiaan)
+* [Matt Clements](https://github.com/mattclements)
