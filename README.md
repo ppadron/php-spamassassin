@@ -9,8 +9,7 @@ Add the following lines to your `composer.json` file and then run `php composer.
 ```json
 {
     "require": {
-        "webeith/php-spamassassin": "dev-master"
+        "templateria/spamassassin": "dev-master"
     }
 }
 ```
-
