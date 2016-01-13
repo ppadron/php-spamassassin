@@ -1,7 +1,7 @@
 {
-    "name": "templateria/php-spamassassin",
+    "name": "templateria/spamassassin",
     "description": "Spamd protocol client for PHP. PHP package that implements the spamd protocol specification",
-    "keywords": ["PHP", "spamassassin"],
+    "keywords": ["spamassassin", "spamd"],
     "license": "Apache-2.0",
     "authors": [
         {
