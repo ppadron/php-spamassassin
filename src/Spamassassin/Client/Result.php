@@ -52,7 +52,7 @@ class Result
      * 
      * @var float
      */
-    public $thresold;
+    public $threshold;
 
     /**
      * Is it spam or not?
