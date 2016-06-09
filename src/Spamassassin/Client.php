@@ -213,8 +213,8 @@ class Client
                 $result->isSpam = true :
                 $result->isSpam = false;
 
-            $result->score    = (float) $matches[2];
-            $result->thresold = (float) $matches[3];
+            $result->score     = (float) $matches[2];
+            $result->threshold = (float) $matches[3];
         } else {
 
             /**
@@ -232,8 +232,8 @@ class Client
                         $result->isSpam = true :
                         $result->isSpam = false;
 
-                    $result->score    = (float) $matches[2];
-                    $result->thresold = (float) $matches[3];
+                    $result->score     = (float) $matches[2];
+                    $result->threshold = (float) $matches[3];
                 }
 
         }
