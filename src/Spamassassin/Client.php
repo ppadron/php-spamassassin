@@ -142,6 +142,7 @@ class Client
      * @param resource $socket Socket connection created by getSocket()
      *
      * @return array Array containing output headers and message
+     * @throws \Exception In case the server goes away
      */
     protected function read($socket)
     {
@@ -150,6 +151,9 @@ class Client
 
         while (true) {
             $buffer   = fgets($socket, 128);
+            if($buffer === false) {
+                throw new \Exception('No response from SpamAssassin Server');
+            }
             $headers .= $buffer;
             if ($buffer == "\r\n" || feof($socket)) {
                 break;
@@ -158,6 +162,9 @@ class Client
 
         while (!feof($socket)) {
             $message .= fgets($socket, 128);
+            if($message === false) {
+                throw new \Exception('No response from SpamAssassin Server');
+            }
         }
 
         fclose($socket);
@@ -261,7 +268,7 @@ class Client
 
     /**
      * Pings the server to check the connection
-     * 
+     *
      * @return bool
      */
     public function ping()
@@ -282,7 +289,7 @@ class Client
      * Returns a detailed report if the message is spam or null if it's ham
      *
      * @param string $message Email message
-     * 
+     *
      * @return Result Detailed spam report
      */
     public function getSpamReport($message)
@@ -416,9 +423,9 @@ class Client
 
     /**
      * Report message as spam, both local and remote.
-     * 
+     *
      * @param string $message Raw email message
-     * 
+     *
      * @return bool
      */
     public function report($message)
@@ -433,9 +440,9 @@ class Client
 
     /**
      * Revokes a message previously reported as spam.
-     * 
+     *
      * @param string $message Raw email message
-     * 
+     *
      * @return bool
      */
     public function revoke($message)
