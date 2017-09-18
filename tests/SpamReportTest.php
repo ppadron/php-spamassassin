@@ -5,7 +5,7 @@ class SpamReportTest extends BaseTestCase
     {
         $report = $this->sa->getSpamReport($this->gtube);
 
-        $this->assertContains("Content preview:",  $report->message);
+        $this->assertContains("1000.0",  $report->message);
         $this->assertContains("1000 GTUBE",        $report->message);
         $this->assertTrue($report->isSpam);
     }
