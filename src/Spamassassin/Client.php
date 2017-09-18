@@ -221,6 +221,7 @@ class Client
 
             $result->score    = (float) $matches[2];
             $result->thresold = (float) $matches[3];
+            $result->threshold = (float) $matches[3];
         } else {
 
             /**
@@ -240,6 +241,7 @@ class Client
 
                     $result->score    = (float) $matches[2];
                     $result->thresold = (float) $matches[3];
+                    $result->threshold = (float) $matches[3];
                 }
 
         }

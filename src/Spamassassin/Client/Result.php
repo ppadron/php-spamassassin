@@ -49,14 +49,20 @@ class Result
 
     /**
      * How many points the message must score to be considered spam
-     * 
+     *
      * @var float
+     */
+    public $threshold;
+
+    /**
+     * Typo kept for backward compat.
+     * @see $threshold
      */
     public $thresold;
 
     /**
      * Is it spam or not?
-     * 
+     *
      * @var boolean
      */
     public $isSpam;

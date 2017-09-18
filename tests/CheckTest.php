@@ -8,7 +8,7 @@ class CheckTest extends BaseTestCase
         $return  = $this->sa->check($message);
 
         $this->assertTrue($return->isSpam);
-        $this->assertEquals(5.0,    $return->thresold);
+        $this->assertEquals(5.0,    $return->threshold);
         $this->assertTrue($return->score >= 1000);
     }
 
