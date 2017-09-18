@@ -14,6 +14,8 @@ Add the following lines to your `composer.json` file and then run `php composer.
 }
 ```
 
+[Basic usage](docs/)
+
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE) for details.
