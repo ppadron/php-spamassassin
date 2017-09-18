@@ -1,7 +1,9 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
 use Spamassassin\Client;
 
-class BaseTestCase extends PHPUnit_Framework_TestCase
+class BaseTestCase extends TestCase
 {
     /** @var Client */
     protected $sa;
@@ -24,6 +26,8 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
                 "user"     => $GLOBALS["PHPUNIT_SA_USER"]
             );
         }
+
+        $params['timeout'] = 3;
 
         $params["protocolVersion"] = $GLOBALS["PHPUNIT_SA_PROTOCOL_VERSION"];
         $this->params = $params;

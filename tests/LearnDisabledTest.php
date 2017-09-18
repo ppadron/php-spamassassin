@@ -36,14 +36,14 @@ class LearnDisabledTest extends BaseTestCase
     public function testShouldThrowExceptionIfLearningIsDisabled()
     {
         $message = $this->getMessage('Spam_GTUBE.txt');
-        $this->setExpectedException('Spamassassin\Client\Exception');
+        $this->expectException('Spamassassin\Client\Exception');
         $this->sa->learn($message, Client::LEARN_SPAM);
     }
 
     public function testShouldThrowExceptionWhenForgettingIfLearningIsDisabled()
     {
         $message = $this->getMessage('Spam_GTUBE.txt');
-        $this->setExpectedException('Spamassassin\Client\Exception');
+        $this->expectException('Spamassassin\Client\Exception');
         $this->sa->learn($message, Client::LEARN_FORGET);
     }
 

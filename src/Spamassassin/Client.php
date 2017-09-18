@@ -24,6 +24,7 @@ class Client
 
     protected $hostname = 'localhost';
     protected $port     = '783';
+    protected $timeout  = null;
 
     protected $socketPath;
     protected $socket;
@@ -58,6 +59,11 @@ class Client
             $socket = fsockopen('unix://' . $this->socketPath, NULL, $errno, $errstr);
         } else {
             $socket = fsockopen($this->hostname, $this->port, $errno, $errstr);
+        }
+
+        if(!empty($this->timeout))
+        {
+            stream_set_timeout($socket, $this->timeout);
         }
 
         if (!$socket) {
