@@ -14,7 +14,7 @@ Add the following lines to your `composer.json` file and then run `php composer.
 }
 ```
 
-[Basic usage](docs/)
+[Basic usage](docs/index.mkd)
 
 ## License
 
