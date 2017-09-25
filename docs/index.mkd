@@ -1,0 +1,29 @@
+# Using spamassasin PHP client
+
+PHP spamassasin client will connect to existing
+spam detection daemon and verify if message is a unwanted 
+spam or if it's a legit message the end user want to
+receive.
+
+To create instance of spamassasin PHP client, create
+new instance of `Client` class - this will use default 
+params which should connect to local spamassasin:
+
+```php
+use Spamassassin\Client;
+
+$client = new Client();
+``` 
+
+Then validate if message is market by spam by checking
+`$result` variable of type `Spamassassin\Result`:
+
+```php
+$result = $client->process($message);
+```
+
+The most important properties here are:
+
+* `isSpam` - whether spamassasin marked message as unwanted
+* `score` - received score
+* `threshold` - required score to be marked as spam

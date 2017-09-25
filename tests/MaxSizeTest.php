@@ -6,7 +6,7 @@ class MaxSizeTest extends BaseTestCase
 {
     public function testShouldThrowExceptionIfMessageExceedsMaxSize()
     {
-        $this->setExpectedException('Spamassassin\Client\Exception');
+        $this->expectException('Spamassassin\Client\Exception');
 
         $params = $this->params;
 
